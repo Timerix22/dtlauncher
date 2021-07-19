@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# IDE0058: Значение выражения никогда не используется
+dotnet_diagnostic.IDE0058.severity = none
+
+# IDE0008: Использование явного типа
+dotnet_diagnostic.IDE0008.severity = none
+
+# IDE0040: Добавьте модификаторы доступности
+dotnet_diagnostic.IDE0040.severity = none
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = none

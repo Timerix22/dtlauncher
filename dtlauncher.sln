@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "..\DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-client-win", "dtlauncher-client-win\dtlauncher-client-win.csproj", "{367793EE-4757-4ADD-BF7E-960DC9EB6DF9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB} = {CE793497-2D5C-42D8-B311-E9B32AF9CDFB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-server-win", "dtlauncher-server-win\dtlauncher-server-win.csproj", "{8B9889A7-93DC-4914-92D1-8209BD3BA71A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB} = {CE793497-2D5C-42D8-B311-E9B32AF9CDFB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtscript", "..\dtscript\dtscript.csproj", "{E02EA967-FD29-47D2-B25B-BA684B784AEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updater", "updater\updater.csproj", "{4784D974-A342-4202-9430-90FE5AC00FC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBC1E4F2-AC73-4D69-A3E6-0432960EC929}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "installer", "installer\installer.vdproj", "{D3B717FC-F9D5-4C8F-8957-1BB964819EF1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4784D974-A342-4202-9430-90FE5AC00FC7} = {4784D974-A342-4202-9430-90FE5AC00FC7}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Build|Any CPU = Build|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Build|Any CPU
+		{367793EE-4757-4ADD-BF7E-960DC9EB6DF9}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{367793EE-4757-4ADD-BF7E-960DC9EB6DF9}.Build|Any CPU.Build.0 = Build|Any CPU
+		{8B9889A7-93DC-4914-92D1-8209BD3BA71A}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{8B9889A7-93DC-4914-92D1-8209BD3BA71A}.Build|Any CPU.Build.0 = Build|Any CPU
+		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.Build.0 = Build|Any CPU
+		{4784D974-A342-4202-9430-90FE5AC00FC7}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{4784D974-A342-4202-9430-90FE5AC00FC7}.Build|Any CPU.Build.0 = Build|Any CPU
+		{D3B717FC-F9D5-4C8F-8957-1BB964819EF1}.Build|Any CPU.ActiveCfg = Build
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6569C0C-DD32-4F7D-AD4C-DBC5434D2F8C}
+	EndGlobalSection
+EndGlobal

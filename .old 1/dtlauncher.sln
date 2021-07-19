@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-client", "dtlauncher-client\dtlauncher-client.csproj", "{EAB95DEC-0D9B-4E17-8875-0159358AC240}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB} = {CE793497-2D5C-42D8-B311-E9B32AF9CDFB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-server", "dtlauncher-server\dtlauncher-server.csproj", "{4F183E7C-A23D-4F5F-933C-F9F32BDC403A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB} = {CE793497-2D5C-42D8-B311-E9B32AF9CDFB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "..\DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Build|Any CPU = Build|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAB95DEC-0D9B-4E17-8875-0159358AC240}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{EAB95DEC-0D9B-4E17-8875-0159358AC240}.Build|Any CPU.Build.0 = Build|Any CPU
+		{4F183E7C-A23D-4F5F-933C-F9F32BDC403A}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{4F183E7C-A23D-4F5F-933C-F9F32BDC403A}.Build|Any CPU.Build.0 = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Build|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6569C0C-DD32-4F7D-AD4C-DBC5434D2F8C}
+	EndGlobalSection
+EndGlobal
