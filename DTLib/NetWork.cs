@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -141,7 +140,6 @@ namespace DTLib
             }
             fileStream.Close();
             Log(new string[] { "g", $"   uploaded {packagesCount * 5120 + buffer.Length} of {fileSize} bytes\n" });
-
         }
 
         // получает с сайта публичный ip
@@ -162,33 +160,6 @@ namespace DTLib
             rezult = rezult.Remove(0, rezult.LastIndexOf('=') + 2);
             return rezult.Remove(rezult.Length - 4);
         }
-
-        // скачивание файла с фтп сервера
-        /*public static void FtpDownload(string address, string login, string password, string outfile)
-        {
-            try
-            {
-                // debug
-                Log(new string[] { "y", "file on server: <", "c", address, "y", ">\nfile on client: <", "c", outfile, "y", ">\n" });
-                // создание запроса
-                // "ftp://m1net.keenetic.pro:20000/" + @infile
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(address);
-                request.Credentials = new NetworkCredential(login, password);
-                request.Method = WebRequestMethods.Ftp.DownloadFile;
-                // получение ответа на запрос
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                FileStream fs = new FileStream(@Directory.GetCurrentDirectory() + '\\' + @outfile, FileMode.Create);
-                byte[] buffer = new byte[64];
-                int size = 0;
-
-                while ((size = responseStream.Read(buffer, 0, buffer.Length)) > 0)
-                    fs.Write(buffer, 0, size);
-                fs.Close();
-                response.Close();
-            }
-            catch (WebException e) { throw new Exception("ftp error:\n" + ((FtpWebResponse)e.Response).StatusDescription + '\n'); }
-        }*/
 
         public class FSP
         {

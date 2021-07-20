@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Security.Cryptography;
+using static DTLib.Filework;
 
 namespace DTLib
 {

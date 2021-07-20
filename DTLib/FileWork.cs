@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace DTLib
 {
@@ -14,12 +13,7 @@ namespace DTLib
         {
             lock (new object())
             {
-                File.Create(logfile);
-                var st = File.OpenAppend(logfile);
-                var writer = new StreamWriter(st, SimpleConverter.UTF8);
-                writer.Write(msg);
-                writer.Close();
-                st.Close();
+                File.WriteAllText(logfile, msg);
             }
         }
 
@@ -29,7 +23,7 @@ namespace DTLib
             lock (new object())
             {
                 key += ": ";
-                using var reader = new StreamReader(configfile);
+                using var reader = new System.IO.StreamReader(configfile);
                 while (!reader.EndOfStream)
                 {
                     string st = reader.ReadLine();
@@ -66,7 +60,7 @@ namespace DTLib
                     }
                 }
                 reader.Close();
-                throw new System.Exception($"ReadFromConfig({configfile}, {key}) error: key not found");
+                throw new Exception($"ReadFromConfig({configfile}, {key}) error: key not found");
             }
         }
 
@@ -137,6 +131,7 @@ namespace DTLib
             }
 
             public static string[] GetFiles(string dir) => System.IO.Directory.GetFiles(dir);
+            public static string[] GetFiles(string dir, string searchPattern) => System.IO.Directory.GetFiles(dir, searchPattern);
             public static string[] GetDirectories(string dir) => System.IO.Directory.GetDirectories(dir);
 
             // выдает список всех файлов
@@ -208,7 +203,7 @@ namespace DTLib
 
             public static byte[] ReadAllBytes(string file)
             {
-                using FileStream stream = System.IO.File.OpenRead(file);
+                using var stream = File.OpenRead(file);
                 int size = GetSize(file);
                 byte[] output = new byte[size];
                 stream.Read(output, 0, size);
@@ -220,8 +215,7 @@ namespace DTLib
 
             public static void WriteAllBytes(string file, byte[] content)
             {
-                File.Create(file);
-                using FileStream stream = System.IO.File.OpenWrite(file);
+                using var stream = File.OpenWrite(file);
                 stream.Write(content, 0, content.Length);
                 stream.Close();
             }
@@ -231,27 +225,27 @@ namespace DTLib
             public static void AppendAllBytes(string file, byte[] content)
             {
                 File.Create(file);
-                using FileStream stream = System.IO.File.OpenWrite(file);
-                stream.Write(content, GetSize(file), content.Length);
+                using var stream = File.OpenAppend(file);
+                stream.Write(content, 0, content.Length);
                 stream.Close();
             }
 
             public static void AppendAllText(string file, string content) => AppendAllBytes(file, content.ToBytes());
 
-            public static FileStream OpenRead(string file)
+            public static System.IO.FileStream OpenRead(string file)
             {
                 if (!Exists(file)) throw new Exception($"file not found: <{file}>");
                 return System.IO.File.OpenRead(file);
             }
-            public static FileStream OpenWrite(string file)
+            public static System.IO.FileStream OpenWrite(string file)
             {
                 File.Create(file);
                 return System.IO.File.OpenWrite(file);
             }
-            public static FileStream OpenAppend(string file)
+            public static System.IO.FileStream OpenAppend(string file)
             {
                 File.Create(file);
-                return System.IO.File.Open(file, FileMode.Append);
+                return System.IO.File.Open(file, System.IO.FileMode.Append);
             }
         }
     }

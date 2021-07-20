@@ -1,10 +1,10 @@
 ﻿using DTLib;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
+using static DTLib.Filework;
 
 namespace dtlauncher_client_win
 {
@@ -23,11 +23,11 @@ namespace dtlauncher_client_win
             {
                 InitializeComponent();
                 LogBox.Text = "   \n"; // костыль для работы Log()
-                Filework.Directory.Create("logs");
-                Filework.Directory.Create("downloads");
-                Filework.Directory.Create("installed");
-                Filework.Directory.Create("installscripts");
-                Filework.Directory.Create("launchinfo");
+                Directory.Create("logs");
+                Directory.Create("downloads");
+                Directory.Create("installed");
+                Directory.Create("installscripts");
+                Directory.Create("launchinfo");
                 PublicLog.Log += Log;
                 LoginButton.Click += Login;
                 RegisterButton.Click += Register;
@@ -122,7 +122,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            Filework.LogToFile(logfile, msg);
+            LogToFile(logfile, msg);
             LogBox.Text += msg;
         }
 

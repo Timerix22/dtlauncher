@@ -1,12 +1,11 @@
 ﻿using DTLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using static DTLib.Network;
+using static DTLib.Filework;
 
 namespace dtlauncher_server
 {
@@ -49,7 +48,7 @@ namespace dtlauncher_server
                 config = config = new(File.ReadAllText("server.dtsod"));
                 int f = (int)config["server_port"];
                 Log("b", "local address: <", "c", config["server_ip"], "b",
-                    ">\npublic address: <", "c", GetPublicIP(), "b",
+                    ">\npublic address: <", "c", Network.GetPublicIP(), "b",
                     ">\nport: <", "c", config["server_port"].ToString(), "b", ">\n");
                 mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["server_ip"]), (int)config["server_port"]));
                 mainSocket.Listen(1000);

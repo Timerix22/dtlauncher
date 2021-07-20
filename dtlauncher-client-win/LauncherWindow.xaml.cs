@@ -1,9 +1,9 @@
 ﻿using DTLib;
 using System;
-using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
+using static DTLib.Filework;
 
 namespace dtlauncher_client_win
 {

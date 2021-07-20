@@ -107,13 +107,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dtscript\dtscript.csproj">
-      <Project>{e02ea967-fd29-47d2-b25b-ba684b784aee}</Project>
-      <Name>dtscript</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DTLib\DTLib.csproj">
       <Project>{ce793497-2d5c-42d8-b311-e9b32af9cdfb}</Project>
       <Name>DTLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dtscript\dtscript.csproj">
+      <Project>{e02ea967-fd29-47d2-b25b-ba684b784aee}</Project>
+      <Name>dtscript</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
