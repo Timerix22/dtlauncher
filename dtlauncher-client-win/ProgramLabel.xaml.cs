@@ -56,12 +56,12 @@ namespace dtlauncher_client_win
                 Window = window;
                 Number = number;
                 descriptor = new(File.ReadAllText(descriptorFile));
-                launchinfo = new(File.ReadAllText("launchinfo\\" + descriptor["launchinfo"]));
+                launchinfo = new(File.ReadAllText("launchinfo\\" + descriptor["id"]));
                 FontSize = 14;
                 Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(240, 240, 240));
                 Text = descriptor["name"];
                 NameLabel.Content = descriptor["name"];
-                IconImage.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "\\icons\\" + descriptor["icon"], UriKind.Absolute));
+                IconImage.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "\\icons\\" + descriptor["id"], UriKind.Absolute));
                 //background = Directory.GetCurrentDirectory() + "\\descriptors\\" + descriptor["background"];
                 //installScript = descriptor["script"];
                 //installDir = descriptor["installdir"];
@@ -90,21 +90,29 @@ namespace dtlauncher_client_win
                 FontSize = 13;
                 Window.NameLabel.Content = Text;
                 Window.DescriptionBox.Text = descriptor["description"];
-                Window.BackgroundImage.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "\\backgrounds\\" + descriptor["background"], UriKind.Absolute));
+                Window.BackgroundImage.Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "\\backgrounds\\" + descriptor["id"], UriKind.Absolute));
                 Window.Launch = () =>
                 {
-                    Window.Log($"launching file <{launchinfo["launchfile"]}>\n");
-                    Process.Start(launchinfo["launchfile"]);
+                    switch (descriptor["id"])
+                    {
+                        case "anarx_1.12":
+                            
+                            break;
+                        default:
+                            Window.Log($"launching file <{launchinfo["launchfile"]}>\n");
+                            Process.Start(launchinfo["launchfile"]);
+                            break;
+                    }
                 };
                 Window.Install = () =>
                 {
-                    Window.Log($"launching installation script <{descriptor["installscript"]}>\n");
+                    Window.Log($"launching installation script <{descriptor["id"]}>\n");
                     var scriptrunner = new DTScript.ScriptRunner
                     {
                         debug = false,
                         mainSocket = Window.mainSocket
                     };
-                    scriptrunner.RunScriptFile("installscripts\\" + descriptor["installscript"]);
+                    scriptrunner.RunScriptFile("installscripts\\" + descriptor["id"]);
                 };
             }
             catch (Exception ex)

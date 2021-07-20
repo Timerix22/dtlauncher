@@ -12,7 +12,8 @@ namespace updater
     {
         static readonly string logfile = $"logs\\updater-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
         static Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        static Dtsod config;
+        static readonly string server_domain = "timerix.cf";
+        static readonly int server_port = 4000;
 
         static void Main(string[] args)
         {
@@ -22,15 +23,14 @@ namespace updater
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
                 PublicLog.LogDel += Log;
-                config = config = new(File.ReadAllText("updater.dtsod"));
                 // подключение к центральному серверу
                 while (true)
                 {
                     try
                     {
-                        Log("b", "server address: <", "c", config["server_domain"], "b",
-                            ">\nserver port: <", "c", config["server_port"].ToString(), "b", ">\n");
-                        mainSocket.Connect(new IPEndPoint(Dns.GetHostAddresses(config["server_domain"])[0], (int)config["server_port"]));
+                        Log("b", "server address: <", "c", server_domain, "b",
+                            ">\nserver port: <", "c", server_port.ToString(), "b", ">\n");
+                        mainSocket.Connect(new IPEndPoint(Dns.GetHostAddresses(server_domain)[0], server_port));
                         Log("g", "connected to server\n");
                         break;
                     }

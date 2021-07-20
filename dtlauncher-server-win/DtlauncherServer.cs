@@ -15,6 +15,7 @@ namespace dtlauncher_server
         static readonly string logfile = $"logs\\dtlauncher-server-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
         static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         static Dtsod config;
+
         //static readonly Dictionary<Socket, Thread> users = new();
 
         static void Main()
