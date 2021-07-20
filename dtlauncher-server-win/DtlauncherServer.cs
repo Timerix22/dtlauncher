@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using static DTLib.NetWork;
+using static DTLib.Network;
 
 namespace dtlauncher_server
 {
@@ -25,7 +25,7 @@ namespace dtlauncher_server
                 Console.Title = "dtlauncher server";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.LogDel += Log;
+                PublicLog.Log += Log;
                 /*var outBuilder = new StringBuilder();
                 string time = DateTime.Now.ToString().Replace(':', '-').Replace(' ', '_');
                 foreach (var _file in Directory.GetFiles(@"D:\!dtlauncher-server\share\public\Conan_Exiles"))
@@ -97,9 +97,9 @@ namespace dtlauncher_server
         {
             lock (new object())
             {
-                if (msg.Length == 1) FileWork.Log(logfile, msg[0]);
+                if (msg.Length == 1) Filework.LogToFile(logfile, msg[0]);
                 else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else FileWork.Log(logfile, SimpleConverter.AutoBuild(msg));
+                else Filework.LogToFile(logfile, SimpleConverter.AutoBuild(msg));
                 ColoredConsole.Write(msg);
             }
         }
@@ -143,7 +143,7 @@ namespace dtlauncher_server
                                     recieved = handlerSocket.GetPackage().ToStr();
                                     filepath = $"registration_requests\\{recieved.Remove(0, recieved.IndexOf(':') + 2)}.req";
                                     File.WriteAllText(filepath, recieved);
-                                    Log("b", $"text wrote to file <","c","registration_requests\\{filepath}","b",">\n");
+                                    Log("b", $"text wrote to file <", "c", "registration_requests\\{filepath}", "b", ">\n");
                                     break;
                                 default:
                                     throw new Exception("unknown request: " + request);
@@ -159,7 +159,7 @@ namespace dtlauncher_server
                     string login;
                     lock (new object())
                     {
-                        login = FileWork.ReadFromConfig("users.db", hash.HashToString());
+                        login = Filework.ReadFromConfig("users.db", hash.HashToString());
                     }
                     handlerSocket.SendPackage("success".ToBytes());
                     Log("g", "user <", "c", login, "g", "> succesfully logined\n");
@@ -203,7 +203,7 @@ namespace dtlauncher_server
         public static void CreateManifest(string dir)
         {
             if (!dir.EndsWith("\\")) dir += "\\";
-            var files = FileWork.GetAllFiles(dir);
+            var files = Filework.Directory.GetAllFiles(dir);
             if (files.Contains(dir + "manifest.dtsod")) files.Remove(dir + "manifest.dtsod");
             StringBuilder manifestBuilder = new();
             Hasher hasher = new();

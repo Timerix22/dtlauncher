@@ -5,12 +5,10 @@
     //
     public static class PublicLog
     {
-        public delegate void LogDelegate(string[] msg);
+        public delegate void LogDelegate(params string[] msg);
         // вот к этому объекту подключайте методы для вывода логов
-        public static LogDelegate LogDel;
-
-        // этот метод вызывается в библиотеке
-        public static void Log(params string[] msg)
-            => LogDel(msg);
+        public static LogDelegate Log;
+        public static LogDelegate LogNoTime;
+        public static LogDelegate FSP_DownloadSpeed;
     }
 }

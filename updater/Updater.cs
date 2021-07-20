@@ -22,7 +22,7 @@ namespace updater
                 Console.Title = "dtlauncher updater";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.LogDel += Log;
+                PublicLog.Log += Log;
                 // подключение к центральному серверу
                 while (true)
                 {
@@ -55,30 +55,11 @@ namespace updater
                 }
                 else
                 {
-                    Log("b", "downloading manifest\n");
-                    mainSocket.FSP_Download("manifest.dtsod", "TEMP\\manifest.dtsod");
-                    var manifest = new Dtsod(File.ReadAllText("TEMP\\manifest.dtsod"));
-                    Log("g", $"found {manifest.Values.Count} files in manifest\n");
-                    var hasher = new Hasher();
-                    foreach (string file in manifest.Values.Keys)
-                    {
-                        Log("b", "file <", "c", file, "b", ">...  ");
-                        if (!File.Exists(file))
-                        {
-                            LogNoTime("y", "doesn't exist\n");
-                            mainSocket.FSP_Download(file, file);
-                        }
-                        else if (hasher.HashFile(file).HashToString() != manifest[file])
-                        {
-                            LogNoTime("y", "outdated\n");
-                            mainSocket.FSP_Download(file, file);
-                        }
-                        else LogNoTime("g", "without changes\n");
-                    }
+
                     // установка шрифтов
                     Log("installing fonts\n");
                     Process.Start("fonts\\fontinst.exe");
-                    FileWork.DirDelete("TEMP");
+                    Filework.Directory.Delete("TEMP");
                     Log("deleted TEMP\n");
                     Process.Start("dtlauncher-client-win.exe", "updated");
                 }
@@ -102,9 +83,9 @@ namespace updater
         {
             lock (new object())
             {
-                if (msg.Length == 1) FileWork.Log(logfile, msg[0]);
+                if (msg.Length == 1) Filework.LogToFile(logfile, msg[0]);
                 else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else FileWork.Log(logfile, SimpleConverter.AutoBuild(msg));
+                else Filework.LogToFile(logfile, SimpleConverter.AutoBuild(msg));
                 ColoredConsole.Write(msg);
             }
         }

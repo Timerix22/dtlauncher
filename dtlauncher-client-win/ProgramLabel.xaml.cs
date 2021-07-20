@@ -96,7 +96,9 @@ namespace dtlauncher_client_win
                     switch (descriptor["id"])
                     {
                         case "anarx_1.12":
-                            
+                            Window.Install();
+                            Window.Log($"launching file <{launchinfo["launchfile"]}>\n");
+                            Process.Start(launchinfo["launchfile"]);
                             break;
                         default:
                             Window.Log($"launching file <{launchinfo["launchfile"]}>\n");

@@ -23,12 +23,12 @@ namespace dtlauncher_client_win
             {
                 InitializeComponent();
                 LogBox.Text = "   \n"; // костыль для работы Log()
-                FileWork.DirCreate("logs");
-                FileWork.DirCreate("downloads");
-                FileWork.DirCreate("installed");
-                FileWork.DirCreate("installscripts");
-                FileWork.DirCreate("launchinfo");
-                PublicLog.LogDel += Log;
+                Filework.Directory.Create("logs");
+                Filework.Directory.Create("downloads");
+                Filework.Directory.Create("installed");
+                Filework.Directory.Create("installscripts");
+                Filework.Directory.Create("launchinfo");
+                PublicLog.Log += Log;
                 LoginButton.Click += Login;
                 RegisterButton.Click += Register;
                 Log("[" + DateTime.Now.ToString() + "]: launcher is starting\n");
@@ -105,7 +105,7 @@ namespace dtlauncher_client_win
                 if (recieved != "success") throw new Exception($"Login() error: invalid server answer <{recieved}>");
                 Log("succesfully connected\n");
                 // вызов нового окна
-                PublicLog.LogDel -= Log;
+                PublicLog.Log -= Log;
                 var lauWin = new LauncherWindow(mainSocket, logfile, LogBox.Text);
                 lauWin.Show();
                 this.Closed -= AppClose;
@@ -122,7 +122,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            FileWork.Log(logfile, msg);
+            Filework.LogToFile(logfile, msg);
             LogBox.Text += msg;
         }
 

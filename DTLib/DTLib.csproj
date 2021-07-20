@@ -35,10 +35,10 @@
     <Compile Include="CompressedArray.cs" />
     <Compile Include="Dtsod.cs" />
     <Compile Include="cs9somefix.cs" />
-    <Compile Include="FileWork.cs" />
+    <Compile Include="Filework.cs" />
     <Compile Include="ColoredConsole.cs" />
     <Compile Include="PublicLog.cs" />
-    <Compile Include="NetWork.cs" />
+    <Compile Include="Network.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Hasher.cs" />
     <Compile Include="SecureRandom.cs" />

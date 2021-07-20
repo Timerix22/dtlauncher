@@ -29,7 +29,7 @@ namespace dtlauncher_client_win
                 mainSocket = _socket;
                 logfile = _logfile;
                 LogBox.Text += _log;
-                PublicLog.LogDel += Log;
+                PublicLog.Log += Log;
                 this.Closed += AppClose;
                 // переключение вкладок кнопками
                 var green = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(44, 220, 17));
@@ -86,7 +86,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            FileWork.Log(logfile, msg);
+            Filework.LogToFile(logfile, msg);
             LogBox.Text += msg;
         }
 
