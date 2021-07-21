@@ -192,7 +192,7 @@ namespace DTLib
                 }
             }
 
-            public static void Copy(string srcPath, string newPath, bool replace = false) 
+            public static void Copy(string srcPath, string newPath, bool replace = false)
             {
                 if (!replace && Exists(newPath)) throw new Exception($"file <{newPath}> alredy exists");
                 Create(newPath);
@@ -224,7 +224,6 @@ namespace DTLib
 
             public static void AppendAllBytes(string file, byte[] content)
             {
-                File.Create(file);
                 using var stream = File.OpenAppend(file);
                 stream.Write(content, 0, content.Length);
                 stream.Close();

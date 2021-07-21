@@ -35,6 +35,7 @@
     <Compile Include="CompressedArray.cs" />
     <Compile Include="Dtsod.cs" />
     <Compile Include="cs9somefix.cs" />
+    <Compile Include="DtsodParser2.cs" />
     <Compile Include="Filework.cs" />
     <Compile Include="ColoredConsole.cs" />
     <Compile Include="PublicLog.cs" />

@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using static DTLib.PublicLog;
 using static DTLib.Filework;
+using static DTLib.PublicLog;
 
 namespace DTLib
 {
@@ -248,7 +248,7 @@ namespace DTLib
                 var manifest = new Dtsod(File.ReadAllText("TEMP\\manifest.dtsod"));
                 Log("g", $"found {manifest.Values.Count} files in manifest\n");
                 var hasher = new Hasher();
-                foreach (string fileOnServer in manifest.Values.Keys)
+                foreach (string fileOnServer in manifest.Keys)
                 {
                     string fileOnClient = $"{dirOnClient}\\{fileOnServer}";
                     Log("b", "file <", "c", fileOnClient, "b", ">...  ");

@@ -95,17 +95,6 @@ namespace DTLib
             }
             return b.ToString();
         }
-        public static string MergeToString<T>(this List<T> list, string separator)
-        {
-            var b = new StringBuilder();
-            b.Append(list[0].ToString());
-            for (int i = 1; i < list.Count; i++)
-            {
-                b.Append(separator);
-                b.Append(list[i].ToString());
-            }
-            return b.ToString();
-        }
 
         // сокращение конвертации
         public static int ToInt<T>(this T input) => Convert.ToInt32(input);
