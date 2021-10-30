@@ -1,9 +1,10 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
-using static DTLib.Filework;
+using DTLib;
+using DTLib.Filesystem;
+using DTLib.Network;
 
 namespace DTScript
 {
@@ -15,6 +16,8 @@ namespace DTScript
         // выводит текст через DTLib если дебаг включен
         public bool debug = false;
         public Socket mainSocket;
+        public FSP fsp;
+
         internal void Debug(params string[] msg)
         {
             if (debug) PublicLog.Log(msg);
@@ -163,20 +166,21 @@ namespace DTScript
                         index++;
                         break;
                     case "Download":
-                        mainSocket.FSP_Download(script[index].Options[0], script[index].Options[1]);
+                        if (fsp is null) fsp = new(mainSocket);
+                        fsp.DownloadFile(script[index].Options[0], script[index].Options[1]);
                         break;
                     case "DirDelete":
-                        Filework.Directory.Delete(script[index].Options[0]);
+                        Directory.Delete(script[index].Options[0]);
                         break;
                     case "FileDelete":
                         File.Delete(script[index].Options[0]);
                         break;
                     case "FileWrite":
-                        Filework.File.Create(script[index].Options[0]);
+                        File.Create(script[index].Options[0]);
                         File.WriteAllText(script[index].Options[0], script[index].Options[1]);
                         break;
                     case "FileAppend":
-                        Filework.File.Create(script[index].Options[0]);
+                        File.Create(script[index].Options[0]);
                         File.AppendAllText(script[index].Options[0], script[index].Options[1]);
                         break;
                     default:
@@ -298,7 +302,7 @@ namespace DTScript
                 // вычисление значений правой и левой части неравенства
                 char act = '\0';
                 double rezult_0 = new(), rezult_1;
-                List<string> _expr = new List<string>();
+                var _expr = new List<string>();
                 for (ushort n = 0; n < expr.Count; n++)
                 {
                     Debug("m", $"   <{expr[n]}>\n");

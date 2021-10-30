@@ -1,10 +1,10 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using DTLib.Dtsod;
 
 namespace dtlauncher_client_win
 {
@@ -40,13 +40,10 @@ namespace dtlauncher_client_win
         //public string description;
         //public string installScript;
         //public string installDir;
-        Dtsod descriptor;
-        Dtsod launchinfo;
+        DtsodV21 descriptor;
+        DtsodV21 launchinfo;
 
-        public ProgramLabel()
-        {
-            InitializeComponent();
-        }
+        public ProgramLabel() => InitializeComponent();
 
         public ProgramLabel(string descriptorFile, int number, LauncherWindow window)
         {

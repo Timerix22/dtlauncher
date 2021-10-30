@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31815.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-client-win", "dtlauncher-client-win\dtlauncher-client-win.csproj", "{367793EE-4757-4ADD-BF7E-960DC9EB6DF9}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtlauncher-server-win", "dt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updater", "updater\updater.csproj", "{4784D974-A342-4202-9430-90FE5AC00FC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtscript", "dtscript\dtscript.csproj", "{E02EA967-FD29-47D2-B25B-BA684B784AEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "..\DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +30,10 @@ Global
 		{8B9889A7-93DC-4914-92D1-8209BD3BA71A}.Build|Any CPU.Build.0 = Build|Any CPU
 		{4784D974-A342-4202-9430-90FE5AC00FC7}.Build|Any CPU.ActiveCfg = Build|Any CPU
 		{4784D974-A342-4202-9430-90FE5AC00FC7}.Build|Any CPU.Build.0 = Build|Any CPU
-		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Build|Any CPU
-		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Build|Any CPU
 		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.ActiveCfg = Build|Any CPU
 		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.Build.0 = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Build|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

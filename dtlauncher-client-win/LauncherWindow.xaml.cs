@@ -1,9 +1,9 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
-using static DTLib.Filework;
+using DTLib;
+using DTLib.Filesystem;
 
 namespace dtlauncher_client_win
 {
@@ -29,8 +29,9 @@ namespace dtlauncher_client_win
                 mainSocket = _socket;
                 logfile = _logfile;
                 LogBox.Text += _log;
-                PublicLog.Log += Log;
-                this.Closed += AppClose;
+                PublicLog.LogEvent += Log;
+                PublicLog.LogNoTimeEvent += Log;
+                Closed += AppClose;
                 // переключение вкладок кнопками
                 var green = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(44, 220, 17));
                 var white = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(240, 240, 240));
@@ -62,7 +63,7 @@ namespace dtlauncher_client_win
                     SettingsButton.Foreground = green;
                 };
                 // считывание дескрипторов программ
-                var descriptors = Directory.GetFiles("descriptors", "*.desc");
+                string[] descriptors = Directory.GetFiles("descriptors", "*.desc");
                 programsArray = new ProgramLabel[descriptors.Length];
                 Log(descriptors.Length + " descriptors found\n");
                 for (int i = 0; i < descriptors.Length; i++)
@@ -86,7 +87,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            Filework.LogToFile(logfile, msg);
+            OldFilework.LogToFile(logfile, msg);
             LogBox.Text += msg;
         }
 

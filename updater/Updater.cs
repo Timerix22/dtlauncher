@@ -1,9 +1,11 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using DTLib;
+using DTLib.Filesystem;
+using DTLib.Network;
 
 namespace updater
 {
@@ -11,8 +13,8 @@ namespace updater
     {
         static readonly string logfile = $"logs\\updater-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
         static Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        static readonly string server_domain = "timerix.cf";
-        static readonly int server_port = 4000;
+        static readonly string server_domain = "m1net.keenetic.pro";
+        static readonly int server_port = 25001;
 
         static void Main(string[] args)
         {
@@ -21,7 +23,8 @@ namespace updater
                 Console.Title = "dtlauncher updater";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.Log += Log;
+                PublicLog.LogEvent += Log;
+                PublicLog.LogNoTimeEvent += Log;
                 // подключение к центральному серверу
                 while (true)
                 {
@@ -38,17 +41,18 @@ namespace updater
                         Log("r", $"updater.Main() error:\n{ex.Message}\n{ex.StackTrace}\n");
                     }
                 }
-                var recieved = mainSocket.GetPackage().ToStr();
+                var fsp = new FSP(mainSocket);
+                string recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "requesting hash") throw new Exception("invalid server request");
                 mainSocket.SendPackage(new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 });
-                recieved = mainSocket.GetPackage().ToStr();
+                recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "updater") throw new Exception($"invalid central server answer <{recieved}>");
                 // обновление апдейтера
                 if (args.Length == 0 || args[0] != "updated")
                 {
-                    mainSocket.FSP_Download("dtlauncher.exe", "TEMP\\dtlauncher.exe");
+                    fsp.DownloadFile("dtlauncher.exe", "TEMP\\dtlauncher.exe");
                     Log("g", "dtlauncher.exe downloaded\n");
-                    mainSocket.FSP_Download("DTLib.dll", "TEMP\\DTLib.dll");
+                    fsp.DownloadFile("DTLib.dll", "TEMP\\DTLib.dll");
                     Log("g", "DTLib.dll downloaded\n");
                     Process.Start("cmd", "/c timeout 0 && copy TEMP\\dtlauncher.exe dtlauncher.exe && copy TEMP\\DTLib.dll DTLib.dll && start dtlauncher.exe updated");
                 }
@@ -56,10 +60,11 @@ namespace updater
                 {
 
                     // установка шрифтов
-                    Log("installing fonts\n");
+                    /*Log("installing fonts\n");
                     Process.Start("fonts\\fontinst.exe");
-                    Filework.Directory.Delete("TEMP");
+                    Directory.Delete("TEMP");*/
                     Log("deleted TEMP\n");
+                    fsp.DownloadFile("dtlauncher-client-win.exe", "dtlauncher-client-win.exe");
                     Process.Start("dtlauncher-client-win.exe", "updated");
                 }
             }
@@ -82,9 +87,9 @@ namespace updater
         {
             lock (new object())
             {
-                if (msg.Length == 1) Filework.LogToFile(logfile, msg[0]);
+                if (msg.Length == 1) OldFilework.LogToFile(logfile, msg[0]);
                 else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else Filework.LogToFile(logfile, SimpleConverter.AutoBuild(msg));
+                else OldFilework.LogToFile(logfile, msg.MergeToString());
                 ColoredConsole.Write(msg);
             }
         }

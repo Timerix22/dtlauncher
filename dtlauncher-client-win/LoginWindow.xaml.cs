@@ -1,10 +1,12 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
-using static DTLib.Filework;
+using DTLib;
+using DTLib.Dtsod;
+using DTLib.Filesystem;
+using DTLib.Network;
 
 namespace dtlauncher_client_win
 {
@@ -15,7 +17,7 @@ namespace dtlauncher_client_win
     {
         public Socket mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         public string logfile = $"logs\\client-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
-        Dtsod config;
+        DtsodV21 config;
 
         public LoginWindow()
         {
@@ -28,12 +30,13 @@ namespace dtlauncher_client_win
                 Directory.Create("installed");
                 Directory.Create("installscripts");
                 Directory.Create("launchinfo");
-                PublicLog.Log += Log;
+                PublicLog.LogEvent += Log;
+                PublicLog.LogNoTimeEvent += Log;
                 LoginButton.Click += Login;
                 RegisterButton.Click += Register;
                 Log("[" + DateTime.Now.ToString() + "]: launcher is starting\n");
                 config = new(File.ReadAllText("client.dtsod"));
-                this.Closed += AppClose;
+                Closed += AppClose;
             }
             catch (Exception e)
             {
@@ -46,7 +49,7 @@ namespace dtlauncher_client_win
             try
             {
                 var hasher = new Hasher();
-                var filename = $"register-{LoginBox.Text}.req";
+                string filename = $"register-{LoginBox.Text}.req";
                 string content = hasher.HashCycled(hasher.Hash(LoginBox.Text.ToBytes(), PasswBox.Password.ToBytes()), 512).HashToString() + ": " + LoginBox.Text;
                 //File.WriteAllText(filename, hasher.HashCycled(hasher.Hash(LoginBox.Text.ToBytes(), PasswBox.Password.ToBytes()), 512).HashToString() + ": " + LoginBox.Text);
                 //Log($"request file created:{Directory.GetCurrentDirectory()}\\register-{LoginBox.Text}.req {hasher.Hash(LoginBox.Text.ToBytes(), PasswBox.Password.ToBytes()).Length}");
@@ -60,13 +63,13 @@ namespace dtlauncher_client_win
                 mainSocket.Connect(new IPEndPoint(Dns.GetHostAddresses(config["server_domain"])[0], (int)config["server_port"]));
                 Log("g", "connecting to server...\n");
                 mainSocket.ReceiveTimeout = 2000;
-                var recieved = mainSocket.GetPackage().ToStr();
+                string recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "requesting hash") throw new Exception($"Login() error: invalid request <{recieved}> <{recieved.Length}>");
                 mainSocket.SendPackage(new byte[] { 255, 255, 255, 255, 255, 255, 255, 255 });
-                recieved = mainSocket.GetPackage().ToStr();
+                recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "updater") throw new Exception($"invalid central server answer <{recieved}>");
                 mainSocket.SendPackage("register new user".ToBytes());
-                recieved = mainSocket.GetPackage().ToStr();
+                recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "ok") throw new Exception($"invalid central server answer <{recieved}>");
                 mainSocket.SendPackage(content.ToBytes());
                 Log("g", "registration request sent\n");
@@ -97,19 +100,20 @@ namespace dtlauncher_client_win
                 mainSocket.Connect(new IPEndPoint(Dns.GetHostAddresses(config["server_domain"])[0], (int)config["server_port"]));
                 Log("g", "connecting to server...\n");
                 mainSocket.ReceiveTimeout = 2000;
-                string recieved = mainSocket.GetPackage().ToStr();
+                string recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "requesting hash") throw new Exception($"Login() error: invalid request <{recieved}> <{recieved.Length}>");
                 var hasher = new Hasher();
                 mainSocket.SendPackage(hasher.HashCycled(hasher.Hash(LoginBox.Text.ToBytes(), PasswBox.Password.ToBytes()), 512));
-                recieved = mainSocket.GetPackage().ToStr();
+                recieved = mainSocket.GetPackage().BytesToString();
                 if (recieved != "success") throw new Exception($"Login() error: invalid server answer <{recieved}>");
                 Log("succesfully connected\n");
                 // вызов нового окна
-                PublicLog.Log -= Log;
+                PublicLog.LogEvent -= Log;
+                PublicLog.LogNoTimeEvent -= Log;
                 var lauWin = new LauncherWindow(mainSocket, logfile, LogBox.Text);
                 lauWin.Show();
-                this.Closed -= AppClose;
-                this.Close();
+                Closed -= AppClose;
+                Close();
             }
             catch (Exception ex)
             {
@@ -122,7 +126,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            LogToFile(logfile, msg);
+            OldFilework.LogToFile(logfile, msg);
             LogBox.Text += msg;
         }
 

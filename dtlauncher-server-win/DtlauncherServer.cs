@@ -1,11 +1,13 @@
-﻿using DTLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using static DTLib.Filework;
+using DTLib;
+using DTLib.Dtsod;
+using DTLib.Filesystem;
+using DTLib.Network;
 
 namespace dtlauncher_server
 {
@@ -13,7 +15,7 @@ namespace dtlauncher_server
     {
         static readonly string logfile = $"logs\\dtlauncher-server-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
         static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        static Dtsod config;
+        static DtsodV21 config;
 
         //static readonly Dictionary<Socket, Thread> users = new();
 
@@ -24,7 +26,8 @@ namespace dtlauncher_server
                 Console.Title = "dtlauncher server";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.Log += Log;
+                PublicLog.LogEvent += Log;
+                PublicLog.LogNoTimeEvent += Log;
                 /*var outBuilder = new StringBuilder();
                 string time = DateTime.Now.ToString().Replace(':', '-').Replace(' ', '_');
                 foreach (var _file in Directory.GetFiles(@"D:\!dtlauncher-server\share\public\Conan_Exiles"))
@@ -48,7 +51,7 @@ namespace dtlauncher_server
                 config = config = new(File.ReadAllText("server.dtsod"));
                 int f = (int)config["server_port"];
                 Log("b", "local address: <", "c", config["server_ip"], "b",
-                    ">\npublic address: <", "c", Network.GetPublicIP(), "b",
+                    ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",
                     ">\nport: <", "c", config["server_port"].ToString(), "b", ">\n");
                 mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["server_ip"]), (int)config["server_port"]));
                 mainSocket.Listen(1000);
@@ -69,7 +72,7 @@ namespace dtlauncher_server
                 // запуск отдельного потока для каждого юзера
                 while (true)
                 {
-                    var userSocket = mainSocket.Accept();
+                    Socket userSocket = mainSocket.Accept();
                     var userThread = new Thread(new ParameterizedThreadStart((obj) => UserHandle((Socket)obj)));
                     //users.Add(userSocket, userThread);
                     userThread.Start(userSocket);
@@ -96,9 +99,9 @@ namespace dtlauncher_server
         {
             lock (new object())
             {
-                if (msg.Length == 1) Filework.LogToFile(logfile, msg[0]);
+                if (msg.Length == 1) OldFilework.LogToFile(logfile, msg[0]);
                 else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else Filework.LogToFile(logfile, SimpleConverter.AutoBuild(msg));
+                else OldFilework.LogToFile(logfile, msg.MergeToString());
                 ColoredConsole.Write(msg);
             }
         }
@@ -109,10 +112,11 @@ namespace dtlauncher_server
             Log("b", "user connecting...  ");
             //Socket fspSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //fspSocket.Bind()
+            FSP fsp = new(handlerSocket);
             try
             {
                 handlerSocket.SendPackage("requesting hash".ToBytes());
-                var hash = handlerSocket.GetPackage();
+                byte[] hash = handlerSocket.GetPackage();
                 // запрос от апдейтера
                 if (hash.HashToString() == "ffffffffffffffff")
                 {
@@ -124,22 +128,22 @@ namespace dtlauncher_server
                     {
                         if (handlerSocket.Available >= 2)
                         {
-                            var request = handlerSocket.GetPackage().ToStr();
+                            string request = handlerSocket.GetPackage().BytesToString();
                             string recieved, filepath;
                             switch (request)
                             {
                                 case "requesting file download":
-                                    filepath = "share\\client\\" + handlerSocket.GetPackage().ToStr();
-                                    handlerSocket.FSP_Upload(filepath);
+                                    filepath = "share\\client\\" + handlerSocket.GetPackage().BytesToString();
+                                    fsp.UploadFile(filepath);
                                     break;
                                 case "register new user":
                                     Log("b", "new user registration requested\n");
                                     handlerSocket.SendPackage("ok".ToBytes());
-                                    //filepath = handlerSocket.GetPackage().ToStr();
+                                    //filepath = handlerSocket.GetPackage().BytesToString();
                                     //if (!filePath.EndsWith(".req")) throw new Exception($"wrong registration request file: <{filepath}>");
                                     //Log("b", $"downloading file registration_requests\\{filepath}\n");
                                     //handlerSocket.FSP_Download($"registration_requests\\{filepath}");
-                                    recieved = handlerSocket.GetPackage().ToStr();
+                                    recieved = handlerSocket.GetPackage().BytesToString();
                                     filepath = $"registration_requests\\{recieved.Remove(0, recieved.IndexOf(':') + 2)}.req";
                                     File.WriteAllText(filepath, recieved);
                                     Log("b", $"text wrote to file <", "c", "registration_requests\\{filepath}", "b", ">\n");
@@ -158,7 +162,7 @@ namespace dtlauncher_server
                     string login;
                     lock (new object())
                     {
-                        login = Filework.ReadFromConfig("users.db", hash.HashToString());
+                        login = OldFilework.ReadFromConfig("users.db", hash.HashToString());
                     }
                     handlerSocket.SendPackage("success".ToBytes());
                     Log("g", "user <", "c", login, "g", "> succesfully logined\n");
@@ -166,7 +170,7 @@ namespace dtlauncher_server
                     {
                         if (handlerSocket.Available >= 64)
                         {
-                            var request = handlerSocket.GetPackage().ToStr();
+                            string request = handlerSocket.GetPackage().BytesToString();
                             switch (request)
                             {
                                 // ответ на NetWork.Ping()
@@ -178,7 +182,7 @@ namespace dtlauncher_server
 
                                     break;*/
                                 case "requesting file download":
-                                    handlerSocket.FSP_Upload("share\\public\\" + handlerSocket.GetPackage().ToStr());
+                                    fsp.UploadFile("share\\public\\" + handlerSocket.GetPackage().BytesToString());
                                     break;
                                 default:
                                     throw new Exception("unknown request: " + request);
@@ -197,12 +201,11 @@ namespace dtlauncher_server
             }
         }
 
-
         // вычисляет и записывает в manifest.dtsod хеши файлов из files_list.dtsod
         public static void CreateManifest(string dir)
         {
             if (!dir.EndsWith("\\")) dir += "\\";
-            var files = Filework.Directory.GetAllFiles(dir);
+            List<string> files = Directory.GetAllFiles(dir);
             if (files.Contains(dir + "manifest.dtsod")) files.Remove(dir + "manifest.dtsod");
             StringBuilder manifestBuilder = new();
             Hasher hasher = new();
