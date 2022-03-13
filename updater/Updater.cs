@@ -51,11 +51,11 @@ namespace updater
                 // обновление апдейтера
                 if (args.Length == 0 || args[0] != "updated")
                 {
-                    fsp.DownloadFile("dtlauncher.exe", "TEMP\\dtlauncher.exe");
-                    Log("g", "dtlauncher.exe downloaded\n");
+                    fsp.DownloadFile("updater.exe", "TEMP\\updater.exe");
+                    Log("g", "updater.exe downloaded\n");
                     fsp.DownloadFile("DTLib.dll", "TEMP\\DTLib.dll");
                     Log("g", "DTLib.dll downloaded\n");
-                    Process.Start("cmd", "/c timeout 0 && copy TEMP\\dtlauncher.exe dtlauncher.exe && copy TEMP\\DTLib.dll DTLib.dll && start dtlauncher.exe updated");
+                    Process.Start("cmd", "/c timeout 0 && copy TEMP\\updater.exe updater.exe && copy TEMP\\DTLib.dll DTLib.dll && start updater.exe updated");
                 }
                 else
                 {

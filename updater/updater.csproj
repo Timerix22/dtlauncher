@@ -7,7 +7,7 @@
     <ProjectGuid>{4784D974-A342-4202-9430-90FE5AC00FC7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>updater</RootNamespace>
-    <AssemblyName>dtlauncher</AssemblyName>
+    <AssemblyName>updater</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
@@ -83,10 +83,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>del /f /q dtlauncher.exe.config
-copy dtlauncher.exe ..\..\dtlauncher-server-win\bin\share\client\dtlauncher.exe
+    <PostBuildEvent>del /f /q updater.exe.config
+copy updater.exe ..\..\dtlauncher-server-win\bin\share\client\updater.exe
 copy DTLib.dll ..\..\dtlauncher-server-win\bin\share\client\DTLib.dll
-copy dtlauncher.exe ..\..\release\dtlauncher.exe
+copy updater.exe ..\..\release\updater.exe
 copy DTLib.dll ..\..\release\DTLib.dll
 
 </PostBuildEvent>

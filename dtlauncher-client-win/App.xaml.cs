@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using DTLib.Filesystem;
 
 namespace dtlauncher_client_win
 {
@@ -12,23 +13,21 @@ namespace dtlauncher_client_win
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            string[] args = e.Args;
             try
             {
-                if (args.Length > 0 && args[0] == "updated")
+                if (e.Args.Length > 0 && e.Args[0] == "updated")
                 {
                     LoginWindow window = new();
                     window.ShowDialog();
                 }
                 else
                 {
-                    Process.Start("cmd", "/c timeout 1 && start dtlauncher.exe");
+                    if (!File.Exists("updater.exe")) throw new Exception("file <updater.exe> not found");
+                    Process.Start("cmd", "/c timeout 1 && start updater.exe");
                 }
             }
             catch (Exception ex)
-            {
-                MessageBox.Show($"STARTUP ERROR:\n{ex.Message}\n{ex.StackTrace}");
-            }
+            { MessageBox.Show($"STARTUP ERROR:\n{ex.Message}\n{ex.StackTrace}"); }
             //Current.Shutdown();
         }
     }
