@@ -1,0 +1,4 @@
+maxmemory: "3000";
+width: "1600";
+height: "1000";
+javapath: "jre\bin";
