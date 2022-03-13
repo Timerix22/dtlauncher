@@ -44,7 +44,7 @@ static class Server
             while (true)
             {
                 var userSocket = mainSocket.Accept();
-                var userThread = new Thread(new ParameterizedThreadStart((obj) => UserHandle((Socket)obj)));
+                var userThread = new Thread((obj) => UserHandle((Socket)obj));
                 userThread.Start(userSocket);
             }
         }

@@ -15,6 +15,7 @@
 .vshistory/
 .idea/
 .editorconfig
+*.user
 
 #backups
 .old*/
