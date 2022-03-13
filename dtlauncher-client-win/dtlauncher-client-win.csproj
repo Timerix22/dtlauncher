@@ -98,6 +98,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="client.dtsod">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,7 +110,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DTLib\DTLib.csproj">
+    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj">
       <Project>{ce793497-2d5c-42d8-b311-e9b32af9cdfb}</Project>
       <Name>DTLib</Name>
     </ProjectReference>
@@ -122,8 +125,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>del /f /q dtlauncher-client-win.exe.config
-copy dtlauncher-client-win.exe C:\projects\c#\dtlauncher\dtlauncher-server-win\bin\share\client\dtlauncher-client-win.exe
-copy C:\projects\c#\dtlauncher\dtlauncher-client-win\client.dtsod client.dtsod 
-copy client.dtsod C:\projects\c#\dtlauncher\dtlauncher-server-win\bin\share\client\client.dtsod</PostBuildEvent>
+copy dtlauncher-client-win.exe ..\..\dtlauncher-server-win\bin\share\client\dtlauncher-client-win.exe
+copy client.dtsod ..\..\dtlauncher-server-win\bin\share\client\client.dtsod</PostBuildEvent>
   </PropertyGroup>
 </Project>

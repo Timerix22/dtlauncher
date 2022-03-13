@@ -6,6 +6,7 @@ using System.Text;
 using DTLib;
 using DTLib.Filesystem;
 using DTLib.Network;
+using DTLib.Extensions;
 
 namespace updater
 {
@@ -87,9 +88,9 @@ namespace updater
         {
             lock (new object())
             {
-                if (msg.Length == 1) OldFilework.LogToFile(logfile, msg[0]);
+                if (msg.Length == 1) File.AppendAllText(logfile, msg[0]);
                 else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else OldFilework.LogToFile(logfile, msg.MergeToString());
+                else File.AppendAllText(logfile, msg.MergeToString());
                 ColoredConsole.Write(msg);
             }
         }

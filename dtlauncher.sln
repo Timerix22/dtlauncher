@@ -17,7 +17,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "updater", "updater\updater.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dtscript", "dtscript\dtscript.csproj", "{E02EA967-FD29-47D2-B25B-BA684B784AEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "..\DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTLib", "..\DTLib\DTLib\DTLib.csproj", "{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sulution Files", "Sulution Files", "{09AA971D-CD70-4D93-BBA9-810C842830D8}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +37,8 @@ Global
 		{4784D974-A342-4202-9430-90FE5AC00FC7}.Build|Any CPU.Build.0 = Build|Any CPU
 		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.ActiveCfg = Build|Any CPU
 		{E02EA967-FD29-47D2-B25B-BA684B784AEE}.Build|Any CPU.Build.0 = Build|Any CPU
-		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Build|Any CPU
-		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Build|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.ActiveCfg = Release-net48|Any CPU
+		{CE793497-2D5C-42D8-B311-E9B32AF9CDFB}.Build|Any CPU.Build.0 = Release-net48|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

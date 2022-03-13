@@ -8,6 +8,7 @@ using DTLib;
 using DTLib.Dtsod;
 using DTLib.Filesystem;
 using DTLib.Network;
+using DTLib.Extensions;
 
 namespace dtlauncher_server
 {
@@ -16,6 +17,7 @@ namespace dtlauncher_server
         static readonly string logfile = $"logs\\dtlauncher-server-{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
         static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         static DtsodV21 config;
+        static DTLib.Loggers.DefaultLogger Info = new("logs", "dtlaunchet_server");
 
         //static readonly Dictionary<Socket, Thread> users = new();
 
@@ -26,8 +28,8 @@ namespace dtlauncher_server
                 Console.Title = "dtlauncher server";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.LogEvent += Log;
-                PublicLog.LogNoTimeEvent += Log;
+                PublicLog.LogEvent += Info.Log;
+                PublicLog.LogNoTimeEvent += Info.Log;
                 /*var outBuilder = new StringBuilder();
                 string time = DateTime.Now.ToString().Replace(':', '-').Replace(' ', '_');
                 foreach (var _file in Directory.GetFiles(@"D:\!dtlauncher-server\share\public\Conan_Exiles"))
@@ -47,15 +49,15 @@ namespace dtlauncher_server
                     outBuilder.Append(file);
                     outBuilder.Append("\");\n");
                 }
-                Log("c", "\n\n" + outBuilder.ToString() + "\n\n");*/
+                Info.Log("c", "\n\n" + outBuilder.ToString() + "\n\n");*/
                 config = config = new(File.ReadAllText("server.dtsod"));
                 int f = (int)config["server_port"];
-                Log("b", "local address: <", "c", config["server_ip"], "b",
+                Info.Log("b", "local address: <", "c", config["server_ip"], "b",
                     ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",
                     ">\nport: <", "c", config["server_port"].ToString(), "b", ">\n");
                 mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["server_ip"]), (int)config["server_port"]));
                 mainSocket.Listen(1000);
-                Log("g", "server started succesfully\n");
+                Info.Log("g", "server started succesfully\n");
                 //
                 /*DTLib.Timer userCkeckTimer = new(true, 3000, () => 
                 {
@@ -63,7 +65,7 @@ namespace dtlauncher_server
                     {
                         if (usr.)
                         {
-                            Log("y", $"closing unused user <{usr.RemoteEndPoint.Serialize()[0]}> thread\n");
+                            Info.Log("y", $"closing unused user <{usr.RemoteEndPoint.Serialize()[0]}> thread\n");
                             users[usr].Abort();
                             users.Remove(usr);
                         }
@@ -80,36 +82,18 @@ namespace dtlauncher_server
             }
             catch (Exception ex)
             {
-                Log("r", $"dtlauncher_server.Main() error:\n{ex.Message}\n{ex.StackTrace}\n");
+                Info.Log("r", $"dtlauncher_server.Main() error:\n{ex.Message}\n{ex.StackTrace}\n");
                 mainSocket.Close();
             }
-            Log("press any key to close... ");
+            Info.Log("press any key to close... ");
             Console.ReadKey();
-            Log("gray", "\n");
-        }
-
-        // вывод лога в консоль и файл
-        public static void Log(params string[] msg)
-        {
-            if (msg.Length == 1) msg[0] = "[" + DateTime.Now.ToString() + "]: " + msg[0];
-            else msg[1] = "[" + DateTime.Now.ToString() + "]: " + msg[1];
-            LogNoTime(msg);
-        }
-        public static void LogNoTime(params string[] msg)
-        {
-            lock (new object())
-            {
-                if (msg.Length == 1) OldFilework.LogToFile(logfile, msg[0]);
-                else if (msg.Length % 2 != 0) throw new Exception("incorrect array to log\n");
-                else OldFilework.LogToFile(logfile, msg.MergeToString());
-                ColoredConsole.Write(msg);
-            }
+            Info.Log("gray", "\n");
         }
 
         // запускается для каждого юзера в отдельном потоке
         static void UserHandle(Socket handlerSocket)
         {
-            Log("b", "user connecting...  ");
+            Info.Log("b", "user connecting...  ");
             //Socket fspSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //fspSocket.Bind()
             FSP fsp = new(handlerSocket);
@@ -120,9 +104,9 @@ namespace dtlauncher_server
                 // запрос от апдейтера
                 if (hash.HashToString() == "ffffffffffffffff")
                 {
-                    LogNoTime("c", "client is updater\n");
+                    Info.LogNoTime("c", "client is updater\n");
                     CreateManifest("share\\client\\");
-                    Log("g", "client files manifest created\n");
+                    Info.Log("g", "client files manifest created\n");
                     handlerSocket.SendPackage("updater".ToBytes());
                     while (true)
                     {
@@ -137,16 +121,16 @@ namespace dtlauncher_server
                                     fsp.UploadFile(filepath);
                                     break;
                                 case "register new user":
-                                    Log("b", "new user registration requested\n");
+                                    Info.Log("b", "new user registration requested\n");
                                     handlerSocket.SendPackage("ok".ToBytes());
                                     //filepath = handlerSocket.GetPackage().BytesToString();
                                     //if (!filePath.EndsWith(".req")) throw new Exception($"wrong registration request file: <{filepath}>");
-                                    //Log("b", $"downloading file registration_requests\\{filepath}\n");
+                                    //Info.Log("b", $"downloading file registration_requests\\{filepath}\n");
                                     //handlerSocket.FSP_Download($"registration_requests\\{filepath}");
                                     recieved = handlerSocket.GetPackage().BytesToString();
                                     filepath = $"registration_requests\\{recieved.Remove(0, recieved.IndexOf(':') + 2)}.req";
                                     File.WriteAllText(filepath, recieved);
-                                    Log("b", $"text wrote to file <", "c", "registration_requests\\{filepath}", "b", ">\n");
+                                    Info.Log("b", $"text wrote to file <", "c", "registration_requests\\{filepath}", "b", ">\n");
                                     break;
                                 default:
                                     throw new Exception("unknown request: " + request);
@@ -158,14 +142,14 @@ namespace dtlauncher_server
                 // запрос от лаунчера
                 else
                 {
-                    LogNoTime("c", "client is launcher\n");
+                    Info.LogNoTime("c", "client is launcher\n");
                     string login;
                     lock (new object())
                     {
                         login = OldFilework.ReadFromConfig("users.db", hash.HashToString());
                     }
                     handlerSocket.SendPackage("success".ToBytes());
-                    Log("g", "user <", "c", login, "g", "> succesfully logined\n");
+                    Info.Log("g", "user <", "c", login, "g", "> succesfully logined\n");
                     while (true)
                     {
                         if (handlerSocket.Available >= 64)
@@ -194,7 +178,7 @@ namespace dtlauncher_server
             }
             catch (Exception ex)
             {
-                Log("y", $"UserStart() error:\n message:\n  {ex.Message}\n{ex.StackTrace}\n");
+                Info.Log("y", $"UserStart() error:\n message:\n  {ex.Message}\n{ex.StackTrace}\n");
                 handlerSocket.Shutdown(SocketShutdown.Both);
                 handlerSocket.Close();
                 Thread.CurrentThread.Abort();

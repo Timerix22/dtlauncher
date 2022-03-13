@@ -87,7 +87,7 @@ namespace dtlauncher_client_win
         public void Log(string msg)
         {
             if (LogBox.Text[LogBox.Text.Length - 1] == '\n') msg = "[" + DateTime.Now.ToString() + "]: " + msg;
-            OldFilework.LogToFile(logfile, msg);
+            File.AppendAllText(logfile, msg);
             LogBox.Text += msg;
         }
 

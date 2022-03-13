@@ -83,7 +83,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="server.dtsod" />
+    <None Include="server.dtsod">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -101,14 +103,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DTLib\DTLib.csproj">
+    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj">
       <Project>{ce793497-2d5c-42d8-b311-e9b32af9cdfb}</Project>
       <Name>DTLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>del /f /q dtlauncher-server-win.exe.config
-copy C:\projects\c#\dtlauncher\dtlauncher-server-win\server.dtsod server.dtsod</PostBuildEvent>
+    <PostBuildEvent>del /f /q dtlauncher-server-win.exe.config</PostBuildEvent>
   </PropertyGroup>
 </Project>

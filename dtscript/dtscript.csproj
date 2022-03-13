@@ -81,7 +81,7 @@
     <Content Include="dtscript_doc.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DTLib\DTLib.csproj">
+    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj">
       <Project>{ce793497-2d5c-42d8-b311-e9b32af9cdfb}</Project>
       <Name>DTLib</Name>
     </ProjectReference>
@@ -89,7 +89,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>del /q /f dtscript.exe.config
-copy dtscript.exe C:\projects\c#\dtlauncher\dtlauncher-server-win\bin\share\client\dtscript.exe</PostBuildEvent>
+copy dtscript.exe ..\..\dtlauncher-server-win\bin\share\client\dtscript.exe</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
