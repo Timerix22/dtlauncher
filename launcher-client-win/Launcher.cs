@@ -22,15 +22,20 @@ public static class Launcher
 {
     public static LauncherConfig Config;
     public static readonly LauncherLogger Logger = new();
-    
+    public static LauncherWindow CurrentLauncherWindow;
     
     public static void _Main(string[] args)
     {
         Logger.Enable();
         Config = new LauncherConfig();
-        LauncherWindow launcherWindow = new();
-        MessageBox.Show("HELLO");
-        launcherWindow.Show();
+        Directory.Create("descriptors");
+        Directory.Create("icons");
+        Directory.Create("backgrounds");
+        Directory.Create("installed");
+        File.WriteAllText($"descriptors{Path.Sep}default.descriptor.template",
+            ReadResource("launcher_client_win.Resources.default.descriptor.template"));
+        CurrentLauncherWindow = new();
+        CurrentLauncherWindow.Show();
     }
     
     public static string ReadResource(string resource_path)
@@ -40,5 +45,12 @@ public static class Launcher
                 ?? throw new Exception($"embedded resource <{resource_path}> not found"), 
             Encoding.UTF8);
         return resourceStreamReader.ReadToEnd();
+    }
+
+    public static void LogError(string context, Exception ex)
+    {
+        string errmsg = $"{context} ERROR:\n{ex}";
+        MessageBox.Show(errmsg);
+        Logger.Log(errmsg);
     }
 }

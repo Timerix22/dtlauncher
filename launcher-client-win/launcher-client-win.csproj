@@ -8,6 +8,8 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <DebugType>full</DebugType>
+    <ApplicationIcon>Resources\logo-D.ico</ApplicationIcon>
+    <TargetCulture Label="Invariant" />
   </PropertyGroup>
 
   <ItemGroup>

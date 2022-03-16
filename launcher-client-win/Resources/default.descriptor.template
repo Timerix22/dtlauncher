@@ -1,0 +1,6 @@
+﻿name: "";           #label, which displays in launcher
+directory: "";      #name of program' directory on server and client
+description: "";    #desctiption, which displays in launcher
+icon: "";           #name of the icon file
+background: "";     #name of the background file
+launchcommand: "";  #command, which starts the program
