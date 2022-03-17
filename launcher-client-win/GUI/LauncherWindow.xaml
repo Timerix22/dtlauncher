@@ -44,7 +44,6 @@
                              Grid.Column="0"
                              Content="Library"
                              FontSize="18"
-                             Foreground="{DynamicResource MyGreen}"
                              Style="{DynamicResource MyButtonStyle}" />
             <local:TabButton x:Name="DownloadsButton"
                              Grid.Column="2"
@@ -105,52 +104,38 @@
                     <Button x:Name="RemoveButton"
                             Width="100"
                             Margin="2,0"
+                            Background="{DynamicResource MyRed}"
                             Content="Remove"
-                            Foreground="{DynamicResource MyRed}"
                             Style="{DynamicResource MyButtonStyle}" />
                     <Button x:Name="InstallButton"
                             Width="100"
                             Margin="2,0"
                             Content="Install"
-                            Foreground="{DynamicResource MyOrange}"
                             Style="{DynamicResource MyButtonStyle}" />
                     <Button x:Name="UpdateButton"
                             Width="100"
                             Margin="2,0"
                             Content="Update"
-                            Foreground="{DynamicResource MyOrange}"
                             Style="{DynamicResource MyButtonStyle}" />
                     <Button x:Name="LaunchButton"
                             Width="100"
                             Margin="2,0"
+                            Background="{DynamicResource MyGreen}"
                             Content="Launch"
-                            Foreground="{DynamicResource MyGreen}"
                             Style="{DynamicResource MyButtonStyle}" />
                 </StackPanel>
                 <TextBox x:Name="DescriptionBox"
                          Grid.Row="4"
-                         Background="{DynamicResource MyDarkTr}"
-                         FontSize="16"
-                         Foreground="{DynamicResource MyWhite}"
-                         IsReadOnly="True"
-                         SelectionBrush="{DynamicResource MySelectionColor}"
-                         Template="{DynamicResource myTextBox}"
-                         TextWrapping="Wrap"
+                         Style="{DynamicResource MyTextBoxStyle}"
                          VerticalScrollBarVisibility="Auto" />
                 <TextBox x:Name="ProgramLogBox"
                          Grid.Row="6"
-                         Background="{DynamicResource MyDarkTr}"
-                         FontSize="16"
-                         Foreground="{DynamicResource MyWhite}"
-                         IsReadOnly="True"
-                         SelectionBrush="{DynamicResource MySelectionColor}"
-                         Template="{DynamicResource myTextBox}"
-                         TextWrapping="Wrap"
+                         Style="{DynamicResource MyTextBoxStyle}"
                          VerticalScrollBarVisibility="Auto" />
             </Grid>
             <Grid Grid.Row="0" Grid.Column="4">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="90" />
+                    <RowDefinition Height="95" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -197,13 +182,12 @@
                            Content="0"
                            Style="{DynamicResource MyLabelStyle}" />
                 </Grid>
-                <ScrollViewer Grid.Row="1"
+                <ScrollViewer Name="ProgramSettingsViever"
+                              Grid.Row="1"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               VerticalContentAlignment="Top"
-                              Template="{DynamicResource myScrollViewer}">
-                    <StackPanel x:Name="ProgramSettings" />
-                </ScrollViewer>
+                              Template="{DynamicResource myScrollViewer}" />
             </Grid>
         </Grid>
 
@@ -230,14 +214,7 @@
             <TextBox x:Name="LogBox"
                      Grid.Row="1"
                      Grid.Column="0"
-                     Background="{DynamicResource MyDarkTr}"
-                     BorderThickness="0"
-                     FontSize="16"
-                     Foreground="{DynamicResource MyWhite}"
-                     IsReadOnly="True"
-                     SelectionBrush="{DynamicResource MySelectionColor}"
-                     Template="{DynamicResource myTextBox}"
-                     TextWrapping="Wrap"
+                     Style="{DynamicResource MyTextBoxStyle}"
                      VerticalScrollBarVisibility="Auto" />
         </Grid>
 

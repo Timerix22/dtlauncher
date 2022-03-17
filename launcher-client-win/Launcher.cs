@@ -32,6 +32,7 @@ public static class Launcher
         Directory.Create("icons");
         Directory.Create("backgrounds");
         Directory.Create("installed");
+        Directory.Create("settings");
         File.WriteAllText($"descriptors{Path.Sep}default.descriptor.template",
             ReadResource("launcher_client_win.Resources.default.descriptor.template"));
         CurrentLauncherWindow = new();

@@ -1,7 +1,6 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using launcher_client_win.GUI;
+using Path = DTLib.Filesystem.Path;
 
 namespace launcher_client_win;
 
@@ -15,8 +14,16 @@ public class Program
     public readonly string LaunchFile;
     public readonly string LaunchArgs;
     
-    public ProgramLabel ProgramLabel;
+    public readonly ProgramLabel ProgramLabel;
+
+    public readonly string SettingsFile;
+    public readonly DtsodV23 Settings;
+
+    public readonly StackPanel SettingsPanel;
+    
     private Process ProgramProcess;
+    
+    public event Action<Program> ProgramSelectedEvent;
 
     public Program(string descriptorFile)
     {
@@ -29,13 +36,31 @@ public class Program
         string startcommand = descriptor["launchcommand"];
         LaunchFile = startcommand.Remove(startcommand.IndexOf(' '));
         LaunchArgs = startcommand.Remove(0,startcommand.IndexOf(' '));
+        
         ProgramLabel = new ProgramLabel(Name, IconFile);
-
-        ProgramLabel.MouseLeftButtonDown += ProgramLabel_ClickHandler;
+        ProgramLabel.MouseLeftButtonDown += (_, _) => ProgramSelectedEvent?.Invoke(this);
+        
+        SettingsFile = $"settings{Path.Sep}{Directory}.settings";
+        Settings = File.Exists(SettingsFile)
+            ? DtsodFunctions.UpdateByDefault(
+                new DtsodV23(File.ReadAllText(SettingsFile)),
+                descriptor["default_settings"])
+            : descriptor["default_settings"];
+        File.WriteAllText(SettingsFile, Settings.ToString());
+        SettingsPanel = new StackPanel();
+        foreach (var setting in Settings)
+        {
+            ProgramSettingsPanelItem settingUi = new(setting.Key, setting.Value);
+            settingUi.UpdatedEvent += UpdateSetting;
+            SettingsPanel.Children.Add(settingUi);
+        }
     }
 
-    public event Action<Program> ProgramSelectedEvent;
-    void ProgramLabel_ClickHandler(object s, MouseButtonEventArgs e) => ProgramSelectedEvent?.Invoke(this);
+    void UpdateSetting(ProgramSettingsPanelItem uiElem)
+    {
+        Settings[uiElem.SettingKey] = uiElem.SettingValue;
+        File.WriteAllText(SettingsFile, Settings.ToString());
+    }
 
     public void Launch()
     {

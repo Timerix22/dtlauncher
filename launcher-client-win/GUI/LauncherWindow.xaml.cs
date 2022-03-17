@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 
 namespace launcher_client_win.GUI;
 
@@ -42,40 +41,13 @@ public partial class LauncherWindow : Window
     {
         if(CurrentTab!=null)
         {
-            CurrentTab.Foreground = App.MyWhite;
+            CurrentTab.Background = App.MyDark;
             CurrentTab.TabGrid.Visibility = Visibility.Collapsed;
         }
         var selected = (TabButton)sender;
-        selected.Foreground = App.MyGreen;
+        selected.Background = App.MySelectionColor;
         selected.TabGrid.Visibility = Visibility.Visible;
         CurrentTab = selected;
-    }
-    void LibraryTab_activate(object sender, RoutedEventArgs eventArgs)
-    {
-        LibraryButton.Foreground = App.MyGreen;
-        LogButton.Foreground = App.MyWhite;
-        SettingsButton.Foreground = App.MyWhite;
-        LibraryGrid.Visibility = Visibility.Visible;
-        LogGrid.Visibility = Visibility.Hidden;
-        SettingsGrid.Visibility = Visibility.Hidden;
-    }
-    void LogTab_activate(object sender, RoutedEventArgs eventArgs)
-    {
-        LibraryButton.Foreground = App.MyWhite;
-        LogButton.Foreground = App.MyGreen;
-        SettingsButton.Foreground = App.MyWhite;
-        LibraryGrid.Visibility = Visibility.Hidden;
-        LogGrid.Visibility = Visibility.Visible;
-        SettingsGrid.Visibility = Visibility.Hidden;
-    }
-    void SettingsTab_activate(object sender, RoutedEventArgs eventArgs)
-    {
-        LibraryButton.Foreground = App.MyWhite;
-        LogButton.Foreground = App.MyWhite;
-        SettingsButton.Foreground = App.MyGreen;
-        LibraryGrid.Visibility = Visibility.Hidden;
-        LogGrid.Visibility = Visibility.Hidden;
-        SettingsGrid.Visibility = Visibility.Visible;
     }
 
     public Program[] Programs;
@@ -99,7 +71,7 @@ public partial class LauncherWindow : Window
     }
     
     public Program DisplayingProgram;
-    public void SelectProgram(Program selectedP)
+    public void SelectProgram(Program selectedProg)
     {
         try
         {
@@ -110,16 +82,17 @@ public partial class LauncherWindow : Window
             }
             else ProgramGrid.Visibility = Visibility.Visible;
 
-            selectedP.ProgramLabel.Foreground = App.MyGreen;
-            selectedP.ProgramLabel.FontWeight = FontWeights.Bold;
+            selectedProg.ProgramLabel.Foreground = App.MySelectionColor;
+            selectedProg.ProgramLabel.FontWeight = FontWeights.Bold;
 
-            NameLabel.Content = selectedP.Name;
-            DescriptionBox.Text = selectedP.Description;
+            NameLabel.Content = selectedProg.Name;
+            DescriptionBox.Text = selectedProg.Description;
             BackgroundImage.Source =
                 new BitmapImage(new Uri(
-                    $"{Directory.GetCurrent()}{Path.Sep}backgrounds{Path.Sep}{selectedP.BackgroundFile}", 
+                    $"{Directory.GetCurrent()}{Path.Sep}backgrounds{Path.Sep}{selectedProg.BackgroundFile}", 
                     UriKind.Absolute));
-            DisplayingProgram = selectedP;
+            ProgramSettingsViever.Content = selectedProg.SettingsPanel;
+            DisplayingProgram = selectedProg;
         }
         catch(Exception ex)
         { LogError("SelectProgram()",ex); }

@@ -20,30 +20,18 @@ public class LauncherConfig
     public LauncherConfig()
     {
         // читает дефолтный конфиг из ресурсов
-        DtsodV23 updatedDtsod = new(ReadResource("launcher_client_win.Resources.launcher.dtsod"));
+        DtsodV23 updatedConfig;
+        DtsodV23 updatedDefault = new(ReadResource("launcher_client_win.Resources.launcher.dtsod"));
         // проверка и обновление конфига
         if (File.Exists(configFile))
         {
-            DtsodV23 dtsod = new(File.ReadAllText(configFile));
-            // заменяет дефолтные значения на пользовательские
-            foreach (var p in dtsod)
-            {
-                if (updatedDtsod.TryGetValue(p.Key, out dynamic def))
-                {
-                    if (def.GetType() != p.Value.GetType())
-                        throw new Exception(
-                            "uncompatible config value type\n  " +
-                            $"launcher.dtsod: {p.Key}:{p.Value} is {p.Value.GetType().Name}, " +
-                            $"must be {def.GetType().Name}");
-                    updatedDtsod[p.Key] = p.Value;
-                }
-            }
-            // записывает обновлённый конфиг в файл
-            WriteToFile();
+            DtsodV23 oldConfig = new(File.ReadAllText(configFile));
+            updatedConfig = DtsodFunctions.UpdateByDefault(oldConfig, updatedDefault);
         }
+        else updatedConfig = updatedDefault;
 
         // парсит парсит полученный дтсод в LauncherConfig
-        List<object> serversD = updatedDtsod["server"];
+        List<object> serversD = updatedConfig["server"];
         ServerAddresses = new Server[serversD.Count];
         ushort i = 0;
         foreach (DtsodV23 serverD in serversD)
@@ -54,8 +42,11 @@ public class LauncherConfig
                 ? new Server(dom, port)
                 : new Server(IPAddress.Parse(serverD["ip"]), port);
         }
+        
+        WriteToFile();
     }
 
+    // записывает обновлённый конфиг в файл
     public void WriteToFile()
     {
         StringBuilder b = new();

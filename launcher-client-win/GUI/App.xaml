@@ -5,12 +5,11 @@
         <SolidColorBrush x:Key="MyDarkTr"
                          Opacity="0.8"
                          Color="#141419" />
-        <SolidColorBrush x:Key="MyGray" Color="#4B4B50" />
+        <SolidColorBrush x:Key="MyGray" Color="#46464B" />
         <SolidColorBrush x:Key="MyWhite" Color="#F0F0F0" />
-        <SolidColorBrush x:Key="MyGreen" Color="#2CDA11" />
-        <SolidColorBrush x:Key="MyOrange" Color="#D09524" />
+        <SolidColorBrush x:Key="MyGreen" Color="#28C311" />
         <SolidColorBrush x:Key="MyRed" Color="#E5160A" />
-        <SolidColorBrush x:Key="MySelectionColor" Color="#3768A4" />
+        <SolidColorBrush x:Key="MySelectionColor" Color="#B7800A" />
 
 
         <ControlTemplate x:Key="myScrollBar" TargetType="{x:Type ScrollBar}">
@@ -105,6 +104,15 @@
             </Grid>
         </ControlTemplate>
 
+        <Style x:Key="MyTextBoxStyle" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Background" Value="{DynamicResource MyDarkTr}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Foreground" Value="{DynamicResource MyWhite}" />
+            <Setter Property="SelectionBrush" Value="{DynamicResource MySelectionColor}" />
+            <Setter Property="Template" Value="{DynamicResource myTextBox}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
         <ControlTemplate x:Key="myTextBox" TargetType="{x:Type TextBoxBase}">
             <Border Name="Border"
                     Padding="0"
@@ -139,18 +147,28 @@
                     Background="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}"
                     BorderBrush="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"
                     BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource TemplatedParent}}">
-                <ContentPresenter Margin="2"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  RecognizesAccessKey="True" />
+                <Grid>
+                    <Border x:Name="Border_fade"
+                            Background="{DynamicResource MyWhite}"
+                            Opacity="0.2"
+                            Visibility="Hidden" />
+                    <Border x:Name="Border_fade2"
+                            Background="{DynamicResource MyGray}"
+                            Opacity="0.4"
+                            Visibility="Hidden" />
+                    <ContentPresenter Margin="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True" />
+                </Grid>
             </Border>
-
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="#FF4E4E59" />
+                    <Setter TargetName="Border_fade" Property="Visibility" Value="Visible" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="#FF38384F" />
+                    <Setter TargetName="Border_fade" Property="Visibility" Value="Hidden" />
+                    <Setter TargetName="Border_fade2" Property="Visibility" Value="Visible" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -186,7 +204,7 @@
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       Data="M 0 0 L 4 4 L 8 0 Z"
-                                      Fill="{DynamicResource MyOrange}" />
+                                      Fill="{DynamicResource MySelectionColor}" />
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="ToggleButton.IsMouseOver" Value="true">

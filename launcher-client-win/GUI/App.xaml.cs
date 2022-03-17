@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace launcher_client_win.GUI;
 
@@ -17,7 +16,7 @@ public partial class App : Application
             MySoftDark = (SolidColorBrush)Resources["MyGray"];
             MyWhite = (SolidColorBrush)Resources["MyWhite"];
             MyGreen = (SolidColorBrush)Resources["MyGreen"];
-            MyOrange = (SolidColorBrush)Resources["MyOrange"];
+            MyOrange = (SolidColorBrush)Resources["MySelectionColor"];
             MySelectionColor = (SolidColorBrush)Resources["MySelectionColor"];
             _Main(e.Args);
         }
