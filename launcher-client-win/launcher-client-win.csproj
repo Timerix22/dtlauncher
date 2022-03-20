@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
     <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
   </ItemGroup>
 

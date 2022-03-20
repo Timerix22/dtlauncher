@@ -7,7 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-server", "launcher
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-client-win", "launcher-client-win\launcher-client-win.csproj", "{A1F770F3-F6B1-4854-9BF0-093F85064B88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib", "..\DTLib\DTLib\DTLib.csproj", "{04B926C4-E9E8-4BDB-90E6-5D34C9F738C4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{F567AA49-E96B-43BD-95B5-A71F9FCB64E1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +27,6 @@ Global
 		{A1F770F3-F6B1-4854-9BF0-093F85064B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1F770F3-F6B1-4854-9BF0-093F85064B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1F770F3-F6B1-4854-9BF0-093F85064B88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04B926C4-E9E8-4BDB-90E6-5D34C9F738C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04B926C4-E9E8-4BDB-90E6-5D34C9F738C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04B926C4-E9E8-4BDB-90E6-5D34C9F738C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04B926C4-E9E8-4BDB-90E6-5D34C9F738C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

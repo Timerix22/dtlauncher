@@ -1,12 +1,10 @@
 ﻿global using DTLib;
 global using DTLib.Dtsod;
 global using DTLib.Filesystem;
-global using DTLib.Network;
 global using DTLib.Extensions;
 global using System;
 global using System.Diagnostics;
 global using System.Net;
-global using System.Net.Sockets;
 global using System.Text;
 global using System.Collections.Generic;
 global using System.Threading;
