@@ -3,11 +3,7 @@ global using System.Diagnostics;
 global using System.Net;
 global using System.Text;
 global using System.Collections.Generic;
-global using System.Threading;
 global using System.Linq;
-global using Avalonia;
-global using Avalonia.Controls;
-global using Avalonia.Media;
 global using DTLib;
 global using DTLib.Dtsod;
 global using DTLib.Filesystem;
@@ -20,7 +16,6 @@ namespace launcher_client_avalonia;
 
 public static class Launcher
 {
-    public static SolidColorBrush MyDark, MySoftDark, MyWhite, MyGreen, MyOrange, MySelectionColor;
     public static LauncherConfig Config;
     public static readonly LauncherLogger Logger = new();
     public static LauncherWindow CurrentLauncherWindow;
@@ -29,20 +24,14 @@ public static class Launcher
     {
         try
         {
-            var resources = Application.Current.Resources;
-            MyDark = (SolidColorBrush)resources["MyDarkTr"];
-            MySoftDark = (SolidColorBrush)resources["MyGray"];
-            MyWhite = (SolidColorBrush)resources["MyWhite"];
-            MyGreen = (SolidColorBrush)resources["MyGreen"];
-            MyOrange = (SolidColorBrush)resources["MySelectionColor"];
-            MySelectionColor = (SolidColorBrush)resources["MySelectionColor"];
-            
             Logger.Enable();
             
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace()
                 .StartWithClassicDesktopLifetime(args);
+            CurrentLauncherWindow = new LauncherWindow();
+            CurrentLauncherWindow.Show();
 
             Config = new LauncherConfig();
             Directory.Create("descriptors");
@@ -52,12 +41,10 @@ public static class Launcher
             Directory.Create("settings");
             File.WriteAllText($"descriptors{Путь.Разд}default.descriptor.template",
                 ReadResource("launcher_client_avalonia.Resources.default.descriptor.template"));
-            CurrentLauncherWindow = new LauncherWindow();
-            CurrentLauncherWindow.Show();
 
         }
         catch (Exception ex)
-        {
+        { 
             LogError("STARTUP", ex);
         }
     }
@@ -73,8 +60,8 @@ public static class Launcher
 
     public static void LogError(string context, Exception ex)
     {
-        string errmsg = $"{context} ERROR:\n{ex}";
-        MessageBox.Show(errmsg);
+        string errmsg = $"{ex.Message}\n{ex.StackTrace}";
+        MessageBox.Show($"{context} ERROR", errmsg);
         Logger.Log(errmsg);
     }
 }

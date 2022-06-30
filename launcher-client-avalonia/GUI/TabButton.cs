@@ -1,6 +1,6 @@
 ﻿namespace launcher_client_avalonia.GUI;
 
-public class TabButton : Button
+public partial class TabButton : Button
 {
     public static readonly StyledProperty<Grid> TabGridProp = AvaloniaProperty.Register<TabButton, Grid>("TabGrid");
     public Grid TabGrid

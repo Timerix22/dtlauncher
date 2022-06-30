@@ -37,20 +37,6 @@
         </Compile>
     </ItemGroup>
     
-    <ItemGroup>
-      <Page Include="GUI\LauncherWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-      </Page>
-      <Page Include="GUI\ProgramLabel.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-      </Page>
-      <Page Include="GUI\ProgramSettingsPanelItem.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-      </Page>
-    </ItemGroup>
     
     <Target Name="PostBuild-Release" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
         <Exec Command="cp -f bin/Release/runtimes/linux-x64/native/* bin/Release/" />

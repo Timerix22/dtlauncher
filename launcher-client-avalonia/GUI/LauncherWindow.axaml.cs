@@ -1,4 +1,7 @@
-﻿namespace launcher_client_avalonia.GUI;
+﻿using Avalonia.Interactivity;
+using Avalonia.Threading;
+
+namespace launcher_client_avalonia.GUI;
 
 public partial class LauncherWindow : Window
 {
@@ -10,10 +13,10 @@ public partial class LauncherWindow : Window
             LogBox.Text = Logger.Buffer;
             Logger.MessageSent += LogHandler;
             LogfileLabel.Content = Logger.Logfile.Remove(0,Logger.Logfile.LastIndexOf(Путь.Разд)+1);
-            LogfileLabel.MouseLeftButtonDown += (s,e)=>
+            LogfileLabel.PointerPressed += (_,_)=>
                 Process.Start("explorer.exe", Logger.Logfile.Remove(Logger.Logfile.LastIndexOf(Путь.Разд)));
-            LogfileLabel.MouseEnter += (s,e)=>LogfileLabel.Foreground=App.MySelectionColor;
-            LogfileLabel.MouseLeave += (s,e)=>LogfileLabel.Foreground=App.MyWhite;
+            LogfileLabel.PointerEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
+            LogfileLabel.PointerLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
             LibraryButton.TabGrid = LibraryGrid;
             DownloadsButton.TabGrid = DownloadsGrid;
             LogButton.TabGrid = LogGrid;
@@ -22,7 +25,7 @@ public partial class LauncherWindow : Window
             DownloadsButton.Click += SelectTab;
             LogButton.Click += SelectTab;
             SettingsButton.Click += SelectTab;
-            ProgramGrid.Visibility = Visibility.Hidden;
+            ProgramGrid.IsVisible = false;
             SelectTab(LibraryButton, null);
             FillProgramsPanel();
             Logger.Log("launcher started");
@@ -31,7 +34,7 @@ public partial class LauncherWindow : Window
         { LogError("LAUNCHER WINDOW INIT",ex); }
     }
 
-    void LogHandler(string m) => Dispatcher.Invoke(()=>LogBox.Text += m);
+    void LogHandler(string m) => Dispatcher.UIThread.InvokeAsync(()=>LogBox.Text += m);
 
 
     private TabButton CurrentTab;
@@ -40,11 +43,11 @@ public partial class LauncherWindow : Window
         if(CurrentTab!=null)
         {
             CurrentTab.Background = App.MyDark;
-            CurrentTab.TabGrid.Visibility = Visibility.Collapsed;
+            CurrentTab.TabGrid.IsVisible = false;
         }
         var selected = (TabButton)sender;
         selected.Background = App.MySelectionColor;
-        selected.TabGrid.Visibility = Visibility.Visible;
+        selected.TabGrid.IsVisible = true;
         CurrentTab = selected;
     }
 
@@ -76,19 +79,17 @@ public partial class LauncherWindow : Window
             if (DisplayingProgram != null)
             {
                 DisplayingProgram.ProgramLabel.Foreground = App.MyWhite;
-                DisplayingProgram.ProgramLabel.FontWeight = FontWeights.Normal;
+                DisplayingProgram.ProgramLabel.FontWeight = FontWeight.Normal;
             }
-            else ProgramGrid.Visibility = Visibility.Visible;
+            else ProgramGrid.IsVisible = true;
 
             selectedProg.ProgramLabel.Foreground = App.MySelectionColor;
-            selectedProg.ProgramLabel.FontWeight = FontWeights.Bold;
+            selectedProg.ProgramLabel.FontWeight = FontWeight.Bold;
 
             NameLabel.Content = selectedProg.Name;
             DescriptionBox.Text = selectedProg.Description;
-            BackgroundImage.Source =
-                new BitmapImage(new Uri(
-                    $"{Directory.GetCurrent()}{Путь.Разд}backgrounds{Путь.Разд}{selectedProg.BackgroundFile}", 
-                    UriKind.Absolute));
+            BackgroundImage.Source = new Bitmap(
+                $"{Directory.GetCurrent()}{Путь.Разд}backgrounds{Путь.Разд}{selectedProg.BackgroundFile}");
             ProgramSettingsViever.Content = selectedProg.SettingsPanel;
             DisplayingProgram = selectedProg;
         }

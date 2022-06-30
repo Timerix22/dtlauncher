@@ -11,13 +11,12 @@ public partial class ProgramSettingsPanelItem : UserControl
         set
         {
             SetValue(SettingKeyProp, value);
-            
-            KeyLabel.ToolTip = new ToolTip
+            /*KeyLabel.ToolTip = new ToolTip
             {
                 Content = value,
                 Foreground = App.MyWhite,
                 Background = App.MySoftDark
-            };
+            };*/
         }
     }
 
@@ -36,6 +35,7 @@ public partial class ProgramSettingsPanelItem : UserControl
         AvaloniaXamlLoader.Load(this);
         SettingKey = key;
         SettingValue = value;
-        ValueBox.TextChanged += (_,_)=> UpdatedEvent?.Invoke(this);
+        //TODO invoke UpdatedEvent only when focus changed
+        ValueBox.TextInput += (_,_)=> UpdatedEvent?.Invoke(this);
     }
 }

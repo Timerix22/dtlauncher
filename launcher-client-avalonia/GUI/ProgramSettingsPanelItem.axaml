@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="launcher_client_avalonia.GUI.ProgramSettingsPanelItem"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:launcher_client_avalonia.GUI"
+             Background="Transparent">
+    <Grid ColumnDefinitions="*,*">
+        <Label Name="KeyLabel"
+               Grid.Column="0"
+               Content="{Binding $parent[local:ProgramSettingsPanelItem].SettingKey}"
+               FontFamily="default"
+               FontSize="16"
+               Classes="MyLabelStyle"
+               ToolTip.Tip="{Binding $self.Content}">
+        </Label>
+        <TextBox Name="ValueBox"
+                 Grid.Column="1"
+                 IsReadOnly="False"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                Classes="MyTextBoxStyle"
+                 Text="{Binding $parent[local:ProgramSettingsPanelItem].SettingValue}" />
+    </Grid>
+</UserControl>

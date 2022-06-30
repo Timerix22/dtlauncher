@@ -1,9 +1,9 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+﻿<Window x:Class="launcher_client_avalonia.GUI.MessageBox"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="launcher_client_avalonia.GUI.MessageBox"
-        Title="MessageBox">
-    
-</Window>
+        Title="MessageBox"
+        d:DesignHeight="450"
+        d:DesignWidth="800"
+        mc:Ignorable="d" />

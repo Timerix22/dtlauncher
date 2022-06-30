@@ -1,6 +1,4 @@
-﻿using Avalonia.Markup.Xaml;
-
-namespace launcher_client_avalonia.GUI;
+﻿namespace launcher_client_avalonia.GUI;
 
 public partial class MessageBox : Window
 {
@@ -12,7 +10,7 @@ public partial class MessageBox : Window
 #endif
     }
 
-    public static void Show(string text)
+    public static void Show(string title, string text)
     {
         throw new NotImplementedException();
     }

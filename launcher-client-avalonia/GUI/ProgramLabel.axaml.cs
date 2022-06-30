@@ -6,8 +6,8 @@ public partial class ProgramLabel : UserControl
     {
         AvaloniaXamlLoader.Load(this);
         NameLabel.Content = label;
-        IconImage.Source = new BitmapImage(new Uri( 
-            $"{Directory.GetCurrent()}{Путь.Разд}icons{Путь.Разд}{icon}", 
-            UriKind.Absolute));
+        
+        IconImage.Source = new Bitmap(
+            $"{Directory.GetCurrent()}{Путь.Разд}icons{Путь.Разд}{icon}");
     }
 }

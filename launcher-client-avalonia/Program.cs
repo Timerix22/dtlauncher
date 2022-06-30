@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using launcher_client_avalonia.GUI;
+﻿using launcher_client_avalonia.GUI;
 
 namespace launcher_client_avalonia;
 
@@ -37,7 +36,7 @@ public class Program
         LaunchArgs = startcommand.Remove(0,startcommand.IndexOf(' '));
         
         ProgramLabel = new ProgramLabel(Name, IconFile);
-        ProgramLabel.MouseLeftButtonDown += (_, _) => ProgramSelectedEvent?.Invoke(this);
+        ProgramLabel.PointerPressed += (_, _) => ProgramSelectedEvent?.Invoke(this);
         
         SettingsFile = $"settings{Путь.Разд}{Directory}.settings";
         Settings = File.Exists(SettingsFile)
