@@ -10,12 +10,9 @@
     <DebugType>full</DebugType>
     <ApplicationIcon>Resources\logo-D.ico</ApplicationIcon>
     <TargetCulture Label="Invariant" />
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
-    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <ApplicationDefinition Include="GUI\App.xaml">
@@ -26,6 +23,12 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
   </ItemGroup>
 
 </Project>

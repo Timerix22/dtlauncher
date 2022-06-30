@@ -11,9 +11,9 @@ public partial class LauncherWindow : Window
             InitializeComponent();
             LogBox.Text = Logger.Buffer;
             Logger.MessageSent += LogHandler;
-            LogfileLabel.Content = Logger.Logfile.Remove(0,Logger.Logfile.LastIndexOf(Path.Sep)+1);
+            LogfileLabel.Content = Logger.Logfile.Remove(0,Logger.Logfile.LastIndexOf(Путь.Разд)+1);
             LogfileLabel.MouseLeftButtonDown += (s,e)=>
-                Process.Start("explorer.exe", Logger.Logfile.Remove(Logger.Logfile.LastIndexOf(Path.Sep)));
+                Process.Start("explorer.exe", Logger.Logfile.Remove(Logger.Logfile.LastIndexOf(Путь.Разд)));
             LogfileLabel.MouseEnter += (s,e)=>LogfileLabel.Foreground=App.MySelectionColor;
             LogfileLabel.MouseLeave += (s,e)=>LogfileLabel.Foreground=App.MyWhite;
             LibraryButton.TabGrid = LibraryGrid;
@@ -89,7 +89,7 @@ public partial class LauncherWindow : Window
             DescriptionBox.Text = selectedProg.Description;
             BackgroundImage.Source =
                 new BitmapImage(new Uri(
-                    $"{Directory.GetCurrent()}{Path.Sep}backgrounds{Path.Sep}{selectedProg.BackgroundFile}", 
+                    $"{Directory.GetCurrent()}{Путь.Разд}backgrounds{Путь.Разд}{selectedProg.BackgroundFile}", 
                     UriKind.Absolute));
             ProgramSettingsViever.Content = selectedProg.SettingsPanel;
             DisplayingProgram = selectedProg;

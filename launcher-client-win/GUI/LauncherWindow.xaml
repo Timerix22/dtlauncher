@@ -9,7 +9,7 @@
         Height="500"
         MinWidth="800"
         MinHeight="500"
-        Background="#232328"
+        Background="{DynamicResource MyBackgroundColor}"
         mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -72,7 +72,7 @@
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="220" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Column="0"
                           HorizontalAlignment="Stretch"

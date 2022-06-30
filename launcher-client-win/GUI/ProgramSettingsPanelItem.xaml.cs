@@ -7,22 +7,33 @@ public partial class ProgramSettingsPanelItem : UserControl
     public static readonly DependencyProperty SettingKeyProp = DependencyProperty.Register(
         "SettingKey",
         typeof(string), 
-        typeof(TabButton));
+        typeof(ProgramSettingsPanelItem));
     public string SettingKey
     {
         get => (string)GetValue(SettingKeyProp);
-        set => SetValue(SettingKeyProp, value);
+        set
+        {
+            SetValue(SettingKeyProp, value);
+            KeyLabel.ToolTip = new ToolTip
+            {
+                Content = value,
+                Foreground = App.MyWhite,
+                Background = App.MySoftDark
+            };
+        }
     }
-    
+
     public static readonly DependencyProperty SettingValueProp = DependencyProperty.Register(
         "SettingValue",
         typeof(string), 
-        typeof(TabButton));
+        typeof(ProgramSettingsPanelItem));
     public string SettingValue
     {
         get => (string)GetValue(SettingValueProp);
         set => SetValue(SettingValueProp, value);
     }
+
+    public event Action<ProgramSettingsPanelItem> UpdatedEvent;
     
     public ProgramSettingsPanelItem(string key, string value)
     {
@@ -31,6 +42,4 @@ public partial class ProgramSettingsPanelItem : UserControl
         SettingValue = value;
         ValueBox.TextChanged += (_,_)=> UpdatedEvent?.Invoke(this);
     }
-
-    public event Action<ProgramSettingsPanelItem> UpdatedEvent;
 }

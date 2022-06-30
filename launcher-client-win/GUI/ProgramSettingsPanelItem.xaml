@@ -4,8 +4,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:launcher_client_win.GUI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             Height="30"
              d:DesignWidth="100"
+             d:DesignHeight="30"
              mc:Ignorable="d"
              Background="Transparent">
     <Grid>
@@ -15,7 +15,9 @@
         </Grid.ColumnDefinitions>
         <Label Name="KeyLabel" Grid.Column="0"
                Content="{Binding SettingKey, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ProgramSettingsPanelItem}}"
-               Style="{DynamicResource MyLabelStyle}" />
+               Style="{DynamicResource MyLabelStyle}"
+               FontFamily="default" 
+               FontSize="16"/>
         <TextBox Name="ValueBox" Grid.Column="1"
                  HorizontalScrollBarVisibility="Auto"
                  Style="{DynamicResource MyTextBoxStyle}"

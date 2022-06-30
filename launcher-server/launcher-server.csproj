@@ -7,12 +7,14 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <DebugType>full</DebugType>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
-    <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
-    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
+    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
   </ItemGroup>
 
   <ItemGroup>

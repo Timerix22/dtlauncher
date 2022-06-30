@@ -1,6 +1,5 @@
 ﻿using System.Windows.Controls;
 using launcher_client_win.GUI;
-using Path = DTLib.Filesystem.Path;
 
 namespace launcher_client_win;
 
@@ -40,9 +39,9 @@ public class Program
         ProgramLabel = new ProgramLabel(Name, IconFile);
         ProgramLabel.MouseLeftButtonDown += (_, _) => ProgramSelectedEvent?.Invoke(this);
         
-        SettingsFile = $"settings{Path.Sep}{Directory}.settings";
+        SettingsFile = $"settings{Путь.Разд}{Directory}.settings";
         Settings = File.Exists(SettingsFile)
-            ? DtsodFunctions.UpdateByDefault(
+            ? DtsodConverter.UpdateByDefault(
                 new DtsodV23(File.ReadAllText(SettingsFile)),
                 descriptor["default_settings"])
             : descriptor["default_settings"];

@@ -26,7 +26,7 @@ public class LauncherConfig
         if (File.Exists(configFile))
         {
             DtsodV23 oldConfig = new(File.ReadAllText(configFile));
-            updatedConfig = DtsodFunctions.UpdateByDefault(oldConfig, updatedDefault);
+            updatedConfig = DtsodConverter.UpdateByDefault(oldConfig, updatedDefault);
         }
         else updatedConfig = updatedDefault;
 

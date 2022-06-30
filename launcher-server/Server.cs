@@ -95,7 +95,7 @@ static class Server
                                     hasher.HashCycled(handlerSocket.GetPackage(), 64).HashToString(),
                                     ":\n{\n\tusername: \"", handlerSocket.GetPackage().ToString(),
                                     "\";\n\tuuid: \"null\";\n};");
-                                string filepath = $"registration_requests\\{DateTime.Now.ToString(CultureInfo.InvariantCulture).NormalizeAsPath()}.req";
+                                string filepath = $"registration_requests\\{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.req";
                                 File.WriteAllText(filepath, req);
                                 Logger.LogAsync("b", $"text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
                                 break;
@@ -126,7 +126,7 @@ static class Server
                                 {
                                     lock (manifestLocker) fsp.UploadFile("share\\manifest.dtsod");
                                 }
-                                else fsp.UploadFile("share\\" + file);
+                                else fsp.UploadFile($"share\\{file}");
                                 break;
                             case "requesting uuid":
                                 Logger.LogAsync("b", $"user ", "c", user.name, "b", " requested uuid");
@@ -134,7 +134,8 @@ static class Server
                                 break;
                             case "excess files found":
                                 Logger.LogAsync("b", $"user ", "c", user.name, "b", " sent excess files list");
-                                fsp.DownloadFile($"excesses\\{user.name}-{DateTime.Now.ToString(CultureInfo.InvariantCulture).NormalizeAsPath()}.txt");
+                                fsp.DownloadFile($"excesses\\{user.name}-" +
+                                    $"{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.txt");
                                 break;
                             case "sending launcher error":
                                 Logger.LogAsync("y", "user ", "c", user.name, "y", "is sending error:");
@@ -176,19 +177,19 @@ static class Server
     {
         lock (manifestLocker)
         {
-            Directory.Create("share\\download_if_not_exist");
-            Directory.Create("share\\sync_always");
-            Directory.Create("share\\sync_and_remove");
+            Directory.Create($"share\\download_if_not_exist");
+            Directory.Create($"share\\sync_always");
+            Directory.Create($"share\\sync_and_remove");
             
-            FSP.CreateManifest("share\\download_if_not_exist");
-            FSP.CreateManifest("share\\sync_always");
+            FSP.CreateManifest($"share\\download_if_not_exist");
+            FSP.CreateManifest($"share\\sync_always");
             foreach (string dir in Directory.GetDirectories("share\\sync_and_remove"))
                 FSP.CreateManifest(dir);
-            File.WriteAllText("share\\sync_and_remove\\dirlist.dtsod",
+            File.WriteAllText($"share\\sync_and_remove\\dirlist.dtsod",
                 $"dirs: [\""+
                     Directory.GetDirectories("share\\sync_and_remove")
                         .MergeToString("\",\"")
-                        .Replace("share\\sync_and_remove\\", "")+
+                        .Replace($"share\\sync_and_remove\\", "")+
                 "\"];");
         };
     }
