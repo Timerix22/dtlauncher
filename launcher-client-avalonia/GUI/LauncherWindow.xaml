@@ -1,0 +1,223 @@
+﻿<Window x:Class="launcher_client_avalonia.GUI.LauncherWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:launcher_client_avalonia.GUI"
+        Title="Launcher"
+        Width="800"
+        Height="500"
+        MinWidth="800"
+        MinHeight="500"
+        Background="{DynamicResource MyBackgroundColor}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="5" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="5" />
+            <RowDefinition />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+        <Image x:Name="BackgroundImage"
+               Grid.RowSpan="5"
+               Grid.ColumnSpan="3"
+               HorizontalAlignment="Center"
+               Stretch="UniformToFill" />
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <local:TabButton x:Name="LibraryButton"
+                             Grid.Column="0"
+                             Content="Library"
+                             FontSize="18"
+                             Style="{DynamicResource MyButtonStyle}" />
+            <local:TabButton x:Name="DownloadsButton"
+                             Grid.Column="2"
+                             Content="Downloads"
+                             FontSize="18"
+                             Style="{DynamicResource MyButtonStyle}" />
+            <local:TabButton x:Name="LogButton"
+                             Grid.Column="4"
+                             Content="Log"
+                             FontSize="18"
+                             Style="{DynamicResource MyButtonStyle}" />
+            <local:TabButton x:Name="SettingsButton"
+                             Grid.Column="6"
+                             Content="Settings"
+                             FontSize="18"
+                             Style="{DynamicResource MyButtonStyle}" />
+
+        </Grid>
+
+        <Grid x:Name="LibraryGrid"
+              Grid.Row="3"
+              Grid.Column="1"
+              Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="220" />
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Column="0"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Template="{DynamicResource myScrollViewer}"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="ProgramsPanel" />
+            </ScrollViewer>
+            <Grid x:Name="ProgramGrid" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="35" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="70" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Label x:Name="NameLabel"
+                       Grid.Row="0"
+                       Content="name"
+                       FontSize="19"
+                       FontWeight="Bold"
+                       Style="{DynamicResource MyLabelStyle}" />
+                <StackPanel Grid.Row="2"
+                            HorizontalAlignment="Right"
+                            ClipToBounds="True"
+                            Orientation="Horizontal">
+                    <Button x:Name="RemoveButton"
+                            Width="100"
+                            Margin="2,0"
+                            Background="{DynamicResource MyRed}"
+                            Content="Remove"
+                            Style="{DynamicResource MyButtonStyle}" />
+                    <Button x:Name="InstallButton"
+                            Width="100"
+                            Margin="2,0"
+                            Content="Install"
+                            Style="{DynamicResource MyButtonStyle}" />
+                    <Button x:Name="UpdateButton"
+                            Width="100"
+                            Margin="2,0"
+                            Content="Update"
+                            Style="{DynamicResource MyButtonStyle}" />
+                    <Button x:Name="LaunchButton"
+                            Width="100"
+                            Margin="2,0"
+                            Background="{DynamicResource MyGreen}"
+                            Content="Launch"
+                            Style="{DynamicResource MyButtonStyle}" />
+                </StackPanel>
+                <TextBox x:Name="DescriptionBox"
+                         Grid.Row="4"
+                         Style="{DynamicResource MyTextBoxStyle}"
+                         VerticalScrollBarVisibility="Auto" />
+                <TextBox x:Name="ProgramLogBox"
+                         Grid.Row="6"
+                         Style="{DynamicResource MyTextBoxStyle}"
+                         VerticalScrollBarVisibility="Auto" />
+            </Grid>
+            <Grid Grid.Row="0" Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="95" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0"
+                           Grid.Column="0"
+                           Content="version:"
+                           Style="{DynamicResource MyLabelStyle}" />
+                    <ComboBox Grid.Row="0"
+                              Grid.Column="1"
+                              Background="{DynamicResource MyDarkTr}"
+                              Template="{DynamicResource MyComboBox}">
+                        <ComboBoxItem IsSelected="True">
+                            <Label Background="Transparent"
+                                   Content="v1"
+                                   Style="{DynamicResource MyLabelStyle}" />
+                        </ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row="1"
+                           Grid.Column="0"
+                           Content="directory:"
+                           Style="{DynamicResource MyLabelStyle}" />
+                    <Label Name="ProgramDirectoryLabel"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Content="0"
+                           Style="{DynamicResource MyLabelStyle}" />
+                    <Label Grid.Row="2"
+                           Grid.Column="0"
+                           Content="size:"
+                           Style="{DynamicResource MyLabelStyle}" />
+                    <Label Name="ProgramSizeLabel"
+                           Grid.Row="2"
+                           Grid.Column="1"
+                           Content="0"
+                           Style="{DynamicResource MyLabelStyle}" />
+                </Grid>
+                <ScrollViewer Name="ProgramSettingsViever"
+                              Grid.Row="1"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              VerticalContentAlignment="Top"
+                              Template="{DynamicResource myScrollViewer}" />
+            </Grid>
+        </Grid>
+
+
+        <Grid x:Name="DownloadsGrid"
+              Grid.Row="3"
+              Grid.Column="1"
+              Visibility="Hidden" />
+
+        <Grid x:Name="LogGrid"
+              Grid.Row="3"
+              Grid.Column="1"
+              Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label x:Name="LogfileLabel"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Content="logfile"
+                   FontStyle="Italic"
+                   Style="{DynamicResource MyLabelStyle}" />
+            <TextBox x:Name="LogBox"
+                     Grid.Row="1"
+                     Grid.Column="0"
+                     Style="{DynamicResource MyTextBoxStyle}"
+                     VerticalScrollBarVisibility="Auto" />
+        </Grid>
+
+        <Grid x:Name="SettingsGrid"
+              Grid.Row="3"
+              Grid.Column="1"
+              Visibility="Hidden" />
+    </Grid>
+</Window>
