@@ -1,12 +1,13 @@
-﻿namespace launcher_client_avalonia.GUI;
+﻿namespace Launcher.Client.Avalonia.GUI;
 
 public partial class ProgramLabel : UserControl
 {
+    public ProgramLabel() => InitializeComponent();
+    
     public ProgramLabel(string label, string icon)
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
         NameLabel.Content = label;
-        
         IconImage.Source = new Bitmap(
             $"{Directory.GetCurrent()}{Путь.Разд}icons{Путь.Разд}{icon}");
     }

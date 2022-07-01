@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace launcher_client_win.GUI;
+namespace Launcher.Client.WPF.GUI;
 
 public partial class ProgramSettingsPanelItem : UserControl
 {

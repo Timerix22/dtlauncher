@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>launcher_client_win</RootNamespace>
+    <RootNamespace>Launcher.Client.WPF</RootNamespace>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <DebugType>full</DebugType>
@@ -22,13 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\*" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*" />
   </ItemGroup>
 
 </Project>

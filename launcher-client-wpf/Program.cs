@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
-using launcher_client_win.GUI;
+using Launcher.Client.WPF.GUI;
 
-namespace launcher_client_win;
+namespace Launcher.Client.WPF;
 
 public class Program
 {

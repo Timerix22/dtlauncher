@@ -1,7 +1,7 @@
 ﻿using Avalonia.Interactivity;
 using Avalonia.Threading;
 
-namespace launcher_client_avalonia.GUI;
+namespace Launcher.Client.Avalonia.GUI;
 
 public partial class LauncherWindow : Window
 {
@@ -9,12 +9,12 @@ public partial class LauncherWindow : Window
     {
         try
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             LogBox.Text = Logger.Buffer;
             Logger.MessageSent += LogHandler;
-            LogfileLabel.Content = Logger.Logfile.Remove(0,Logger.Logfile.LastIndexOf(Путь.Разд)+1);
+            LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Путь.Разд)+1);
             LogfileLabel.PointerPressed += (_,_)=>
-                Process.Start("explorer.exe", Logger.Logfile.Remove(Logger.Logfile.LastIndexOf(Путь.Разд)));
+                Process.Start("explorer.exe", LauncherLogger.LogfileDir);
             LogfileLabel.PointerEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
             LogfileLabel.PointerLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
             LibraryButton.TabGrid = LibraryGrid;

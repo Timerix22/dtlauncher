@@ -8,13 +8,12 @@ global using DTLib;
 global using DTLib.Dtsod;
 global using DTLib.Filesystem;
 global using DTLib.Extensions;
-global using static launcher_client_avalonia.Launcher;
-using System.Reflection;
-using launcher_client_avalonia.GUI;
+global using static Launcher.Client.Avalonia.LauncherMain;
+using Launcher.Client.Avalonia.GUI;
 
-namespace launcher_client_avalonia;
+namespace Launcher.Client.Avalonia;
 
-public static class Launcher
+public static class LauncherMain
 {
     public static LauncherConfig Config;
     public static readonly LauncherLogger Logger = new();
@@ -24,15 +23,6 @@ public static class Launcher
     {
         try
         {
-            Logger.Enable();
-            
-            AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .LogToTrace()
-                .StartWithClassicDesktopLifetime(args);
-            CurrentLauncherWindow = new LauncherWindow();
-            CurrentLauncherWindow.Show();
-
             Config = new LauncherConfig();
             Directory.Create("descriptors");
             Directory.Create("icons");
@@ -40,8 +30,16 @@ public static class Launcher
             Directory.Create("installed");
             Directory.Create("settings");
             File.WriteAllText($"descriptors{Путь.Разд}default.descriptor.template",
-                ReadResource("launcher_client_avalonia.Resources.default.descriptor.template"));
-
+                EmbeddedResources.ReadText("Launcher.Client.Avalonia.Resources.default.descriptor.template"));
+            
+            var traceHandler = new ConsoleTraceListener();
+            Trace.AutoFlush = true;
+            Trace.Listeners.Add(traceHandler);
+            
+            AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .LogToTrace()
+                .StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)
         { 
@@ -49,19 +47,10 @@ public static class Launcher
         }
     }
 
-    public static string ReadResource(string resource_path)
-    {
-        using var resourceStreamReader = new System.IO.StreamReader(
-            Assembly.GetExecutingAssembly().GetManifestResourceStream(resource_path)
-            ?? throw new Exception($"embedded resource <{resource_path}> not found"),
-            Encoding.UTF8);
-        return resourceStreamReader.ReadToEnd();
-    }
-
     public static void LogError(string context, Exception ex)
     {
         string errmsg = $"{ex.Message}\n{ex.StackTrace}";
-        MessageBox.Show($"{context} ERROR", errmsg);
+        //MessageBox.Show($"{context} ERROR", errmsg);
         Logger.Log(errmsg);
     }
 }

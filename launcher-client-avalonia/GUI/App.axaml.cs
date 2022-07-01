@@ -3,8 +3,9 @@ global using Avalonia.Controls;
 global using Avalonia.Media;
 global using Avalonia.Media.Imaging;
 global using Avalonia.Markup.Xaml;
+using Avalonia.Controls.ApplicationLifetimes;
 
-namespace launcher_client_avalonia
+namespace Launcher.Client.Avalonia.GUI
 {
     public partial class App : Application
     {
@@ -20,5 +21,18 @@ namespace launcher_client_avalonia
             MyOrange = (SolidColorBrush)Resources["MySelectionColor"];
             MySelectionColor = (SolidColorBrush)Resources["MySelectionColor"];
         }
+        
+        
+       public override void OnFrameworkInitializationCompleted()
+       {
+           if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+           {
+               CurrentLauncherWindow = new LauncherWindow();
+               desktop.MainWindow = CurrentLauncherWindow;
+               CurrentLauncherWindow.Show(); 
+           }
+
+           base.OnFrameworkInitializationCompleted();
+       }
     }
 }

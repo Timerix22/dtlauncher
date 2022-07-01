@@ -1,4 +1,4 @@
-﻿namespace launcher_client_win;
+﻿namespace Launcher.Client.WPF;
 
 public class LauncherConfig
 {
@@ -21,7 +21,7 @@ public class LauncherConfig
     {
         // читает дефолтный конфиг из ресурсов
         DtsodV23 updatedConfig;
-        DtsodV23 updatedDefault = new(ReadResource("launcher_client_win.Resources.launcher.dtsod"));
+        DtsodV23 updatedDefault = new(EmbeddedResources.ReadText("Launcher.Client.WPF.Resources.launcher.dtsod"));
         // проверка и обновление конфига
         if (File.Exists(configFile))
         {

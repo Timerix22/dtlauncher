@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace launcher_client_win.GUI;
+namespace Launcher.Client.WPF.GUI;
 
 public partial class ProgramLabel : UserControl
 {

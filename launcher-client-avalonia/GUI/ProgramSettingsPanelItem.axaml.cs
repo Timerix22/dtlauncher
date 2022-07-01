@@ -1,4 +1,4 @@
-﻿namespace launcher_client_avalonia.GUI;
+﻿namespace Launcher.Client.Avalonia.GUI;
 
 public partial class ProgramSettingsPanelItem : UserControl
 {
@@ -7,32 +7,32 @@ public partial class ProgramSettingsPanelItem : UserControl
         "SettingKey");
     public string SettingKey
     {
-        get => (string)GetValue(SettingKeyProp);
-        set
-        {
-            SetValue(SettingKeyProp, value);
-            /*KeyLabel.ToolTip = new ToolTip
+        get => GetValue(SettingKeyProp);
+        set => SetValue(SettingKeyProp, value);
+        //TODO deal with textblock size
+        /*KeyLabel.ToolTip = new ToolTip
             {
                 Content = value,
                 Foreground = App.MyWhite,
                 Background = App.MySoftDark
             };*/
-        }
     }
 
     public static readonly StyledProperty<string> SettingValueProp = 
         AvaloniaProperty.Register<ProgramSettingsPanelItem, string>("SettingValue");
     public string SettingValue
     {
-        get => (string)GetValue(SettingValueProp);
+        get => GetValue(SettingValueProp);
         set => SetValue(SettingValueProp, value);
     }
 
     public event Action<ProgramSettingsPanelItem> UpdatedEvent;
+
+    public ProgramSettingsPanelItem() => InitializeComponent();
     
     public ProgramSettingsPanelItem(string key, string value)
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
         SettingKey = key;
         SettingValue = value;
         //TODO invoke UpdatedEvent only when focus changed

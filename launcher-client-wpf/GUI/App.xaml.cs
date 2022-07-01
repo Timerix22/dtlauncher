@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace launcher_client_win.GUI;
+namespace Launcher.Client.WPF.GUI;
 
 public partial class App : Application
 {

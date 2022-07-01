@@ -1,10 +1,10 @@
-﻿namespace launcher_client_avalonia.GUI;
+﻿namespace Launcher.Client.Avalonia.GUI;
 
 public partial class MessageBox : Window
 {
     public MessageBox()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif

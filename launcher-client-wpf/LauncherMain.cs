@@ -7,16 +7,14 @@ global using System.Diagnostics;
 global using System.Net;
 global using System.Text;
 global using System.Collections.Generic;
-global using System.Threading;
 global using System.Linq;
 global using System.Windows;
-global using  static launcher_client_win.Launcher;
-using System.Reflection;
-using launcher_client_win.GUI;
+global using  static Launcher.Client.WPF.LauncherMain;
+using Launcher.Client.WPF.GUI;
 
-namespace launcher_client_win;
+namespace Launcher.Client.WPF;
 
-public static class Launcher
+public static class LauncherMain
 {
     public static LauncherConfig Config;
     public static readonly LauncherLogger Logger = new();
@@ -24,7 +22,6 @@ public static class Launcher
     
     public static void _Main(string[] args)
     {
-        Logger.Enable();
         Config = new LauncherConfig();
         Directory.Create("descriptors");
         Directory.Create("icons");
@@ -32,18 +29,9 @@ public static class Launcher
         Directory.Create("installed");
         Directory.Create("settings");
         File.WriteAllText($"descriptors{Путь.Разд}default.descriptor.template",
-            ReadResource("launcher_client_win.Resources.default.descriptor.template"));
-        CurrentLauncherWindow = new();
+            EmbeddedResources.ReadText("Launcher.Client.WPF.Resources.default.descriptor.template"));
+        CurrentLauncherWindow = new LauncherWindow();
         CurrentLauncherWindow.Show();
-    }
-    
-    public static string ReadResource(string resource_path)
-    {
-        using var resourceStreamReader = new System.IO.StreamReader(
-            Assembly.GetExecutingAssembly().GetManifestResourceStream(resource_path) 
-                ?? throw new Exception($"embedded resource <{resource_path}> not found"), 
-            Encoding.UTF8);
-        return resourceStreamReader.ReadToEnd();
     }
 
     public static void LogError(string context, Exception ex)

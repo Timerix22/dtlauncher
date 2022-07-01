@@ -11,26 +11,25 @@ global using System.Threading;
 global using System.Linq;
 using System.Globalization;
 
-namespace launcher_server;
+namespace Launcher.Server;
 
 static class Server
 {
     static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     static DtsodV23 config;
-    private static readonly DTLib.Loggers.AsyncLogger Logger = new("logs", "launcher-server");
+    private static readonly DTLib.Loggers.ConsoleLogger Logger = new("logs", "launcher-server");
 
     static readonly object manifestLocker = new();
 
-    static void Main(string[] args)
+    static void Main()
     {
         try
         {
-            Console.Title = "minecraft_launcher_server";
+            Console.Title = "Launcher.Server";
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
-            Logger.Enable();
-            PublicLog.LogEvent += Logger.LogAsync;
-            PublicLog.LogNoTimeEvent += Logger.LogAsync;
+            PublicLog.LogEvent += Logger.Log;
+            PublicLog.LogNoTimeEvent += Logger.Log;
             config = new DtsodV23(File.ReadAllText("launcher-server.dtsod"));
             Logger.Log("b", "local address: <", "c", config["local_ip"], "b",
                 ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",
@@ -63,7 +62,7 @@ static class Server
     // запускается для каждого юзера в отдельном потоке
     static void UserHandle(Socket handlerSocket)
     {
-        Logger.LogAsync("b", "user connecting...  ");
+        Logger.Log("b", "user connecting...  ");
         try
         {
             // запрос хеша пароля и логина
@@ -74,7 +73,7 @@ static class Server
             // запрос от апдейтера
             if (hash == hasher.HashCycled("updater".ToBytes(),64))
             {
-                Logger.LogAsync("b", "user is ", "c", "updater");
+                Logger.Log("b", "user is ", "c", "updater");
                 handlerSocket.SendPackage("updater".ToBytes());
                 // обработка запросов
                 while (true)
@@ -85,11 +84,11 @@ static class Server
                         switch (request)
                         {
                             case "requesting launcher update":
-                                Logger.LogAsync("b", "updater requested client.exe");
+                                Logger.Log("b", "updater requested client.exe");
                                 fsp.UploadFile("share\\launcher.exe");
                                 break;
                             case "register new user":
-                                Logger.LogAsync("b", "new user registration requested");
+                                Logger.Log("b", "new user registration requested");
                                 handlerSocket.SendPackage("ready".ToBytes());
                                 string req = StringConverter.MergeToString(
                                     hasher.HashCycled(handlerSocket.GetPackage(), 64).HashToString(),
@@ -97,7 +96,7 @@ static class Server
                                     "\";\n\tuuid: \"null\";\n};");
                                 string filepath = $"registration_requests\\{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.req";
                                 File.WriteAllText(filepath, req);
-                                Logger.LogAsync("b", $"text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
+                                Logger.Log("b", $"text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -109,7 +108,7 @@ static class Server
             // запрос от юзера
             else if (FindUser(hash, out var user))
             {
-                Logger.LogAsync("b", $"user is ", "c", user.name);
+                Logger.Log("b", $"user is ", "c", user.name);
                 handlerSocket.SendPackage("launcher".ToBytes());
                 // обработка запросов
                 while (true)
@@ -121,7 +120,7 @@ static class Server
                         {
                             case "requesting file download":
                                 var file = handlerSocket.GetPackage().ToString();
-                                Logger.LogAsync("b", $"user ", "c", user.name, "b", " requested file ", "c", file);
+                                Logger.Log("b", $"user ", "c", user.name, "b", " requested file ", "c", file);
                                 if (file == "manifest.dtsod")
                                 {
                                     lock (manifestLocker) fsp.UploadFile("share\\manifest.dtsod");
@@ -129,18 +128,18 @@ static class Server
                                 else fsp.UploadFile($"share\\{file}");
                                 break;
                             case "requesting uuid":
-                                Logger.LogAsync("b", $"user ", "c", user.name, "b", " requested uuid");
+                                Logger.Log("b", $"user ", "c", user.name, "b", " requested uuid");
                                 handlerSocket.SendPackage(user.uuid.ToBytes());
                                 break;
                             case "excess files found":
-                                Logger.LogAsync("b", $"user ", "c", user.name, "b", " sent excess files list");
+                                Logger.Log("b", $"user ", "c", user.name, "b", " sent excess files list");
                                 fsp.DownloadFile($"excesses\\{user.name}-" +
                                     $"{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.txt");
                                 break;
                             case "sending launcher error":
-                                Logger.LogAsync("y", "user ", "c", user.name, "y", "is sending error:");
+                                Logger.Log("y", "user ", "c", user.name, "y", "is sending error:");
                                 string error = handlerSocket.GetPackage().ToString();
-                                Logger.LogAsync("y", error + '\n');
+                                Logger.Log("y", error + '\n');
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -152,13 +151,13 @@ static class Server
             // неизвестный юзер
             else
             {
-                Logger.LogAsync("y", $"user with hash <{hash.HashToString()}> not found");
+                Logger.Log("y", $"user with hash <{hash.HashToString()}> not found");
                 handlerSocket.SendPackage("user not found".ToBytes());
             }
         }
         catch (Exception ex)
         {
-            Logger.LogAsync("y", $"UserStart() error:\n message:\n  {ex}");
+            Logger.Log("y", $"UserStart() error:\n message:\n  {ex}");
             if (mainSocket.Connected)
             {
                 mainSocket.Shutdown(SocketShutdown.Both);
@@ -169,7 +168,7 @@ static class Server
         {
             if (handlerSocket.Connected) handlerSocket.Shutdown(SocketShutdown.Both);
             handlerSocket.Close();
-            Logger.LogAsync("g", "user disconnected");
+            Logger.Log("g", "user disconnected");
         }
     }
 
@@ -191,7 +190,7 @@ static class Server
                         .MergeToString("\",\"")
                         .Replace($"share\\sync_and_remove\\", "")+
                 "\"];");
-        };
+        }
     }
 
     static bool FindUser(byte[] hash, out (string name, string uuid) user)

@@ -1,7 +1,7 @@
-﻿<UserControl x:Class="launcher_client_avalonia.GUI.ProgramLabel"
+﻿<UserControl x:Class="Launcher.Client.Avalonia.GUI.ProgramLabel"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:launcher_client_avalonia.GUI"
+             xmlns:local="clr-namespace:Launcher.Client.Avalonia.GUI"
              Height="50"
              Background="{DynamicResource MyDarkTr}"
              BorderBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
@@ -9,7 +9,7 @@
              Foreground="{DynamicResource MyWhite}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding Height, RelativeSource={RelativeSource FindAncestor, AncestorType=local:ProgramLabel}}" />
+            <ColumnDefinition Width="{Binding $parent[local:ProgramLabel].Height}" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -25,6 +25,6 @@
                FontFamily="Unispace"
                FontSize="15"
                FontWeight="Normal"
-               Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ProgramLabel}}" />
+               Foreground="{Binding $parent[local:ProgramLabel].Foreground}" />
     </Grid>
 </UserControl>

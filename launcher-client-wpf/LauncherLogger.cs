@@ -1,6 +1,6 @@
 ﻿using DTLib.Loggers;
 
-namespace Launcher.Client.Avalonia;
+namespace Launcher.Client.WPF;
 
 public class LauncherLogger : ConsoleLogger
 {

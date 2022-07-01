@@ -1,6 +1,6 @@
-﻿using launcher_client_avalonia.GUI;
+﻿using Launcher.Client.Avalonia.GUI;
 
-namespace launcher_client_avalonia;
+namespace Launcher.Client.Avalonia;
 
 public class Program
 {

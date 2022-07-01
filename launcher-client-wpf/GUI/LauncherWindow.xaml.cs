@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace launcher_client_win.GUI;
+namespace Launcher.Client.WPF.GUI;
 
 public partial class LauncherWindow : Window
 {
@@ -11,11 +11,11 @@ public partial class LauncherWindow : Window
             InitializeComponent();
             LogBox.Text = Logger.Buffer;
             Logger.MessageSent += LogHandler;
-            LogfileLabel.Content = Logger.Logfile.Remove(0,Logger.Logfile.LastIndexOf(Путь.Разд)+1);
-            LogfileLabel.MouseLeftButtonDown += (s,e)=>
-                Process.Start("explorer.exe", Logger.Logfile.Remove(Logger.Logfile.LastIndexOf(Путь.Разд)));
-            LogfileLabel.MouseEnter += (s,e)=>LogfileLabel.Foreground=App.MySelectionColor;
-            LogfileLabel.MouseLeave += (s,e)=>LogfileLabel.Foreground=App.MyWhite;
+            LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Путь.Разд)+1);
+            LogfileLabel.MouseLeftButtonDown += (_,_)=>
+                Process.Start("explorer.exe", LauncherLogger.LogfileDir);
+            LogfileLabel.MouseEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
+            LogfileLabel.MouseLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
             LibraryButton.TabGrid = LibraryGrid;
             DownloadsButton.TabGrid = DownloadsGrid;
             LogButton.TabGrid = LogGrid;

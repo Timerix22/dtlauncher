@@ -1,4 +1,4 @@
-﻿namespace launcher_client_avalonia;
+﻿namespace Launcher.Client.Avalonia;
 
 public class LauncherConfig
 {
@@ -21,7 +21,7 @@ public class LauncherConfig
     {
         // читает дефолтный конфиг из ресурсов
         DtsodV23 updatedConfig;
-        DtsodV23 updatedDefault = new(ReadResource("launcher_client_avalonia.Resources.launcher.dtsod"));
+        DtsodV23 updatedDefault = new(EmbeddedResources.ReadText("Launcher.Client.Avalonia.Resources.launcher.dtsod"));
         // проверка и обновление конфига
         if (File.Exists(configFile))
         {

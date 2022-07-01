@@ -1,4 +1,4 @@
-<Application x:Class="launcher_client_avalonia.GUI.App"
+<Application x:Class="Launcher.Client.Avalonia.GUI.App"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
@@ -12,13 +12,13 @@
         <SolidColorBrush x:Key="MyRed" Color="#E5160A" />
         <SolidColorBrush x:Key="MySelectionColor" Color="#B7800A" />
     </Application.Resources>
-    
+
     <Application.Styles>
         <FluentTheme Mode="Dark" />
-        
-        <Style x:Name="MyTextBoxStyle" Selector="TextBox.MyTextBoxStyle"/>
-        <Style x:Name="MyLabelStyle" Selector="Label.MyLabelStyle"/>
-        <Style x:Name="MyButtonStyle" Selector="Button.MyButtonStyle"/>
-        
+
+        <Style Selector="TextBox.MyTextBoxStyle" />
+        <Style Selector="Label.MyLabelStyle" />
+        <Style Selector="Button.MyButtonStyle" />
+
     </Application.Styles>
 </Application>
