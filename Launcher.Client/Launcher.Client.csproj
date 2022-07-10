@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <RootNamespace>Launcher.Client</RootNamespace>
+        <DebugType>full</DebugType>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
+        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
+        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\default.descriptor.template" />
+      <EmbeddedResource Include="Resources\launcher.dtsod" />
+    </ItemGroup>
+
+</Project>

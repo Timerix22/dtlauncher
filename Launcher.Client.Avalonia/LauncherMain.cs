@@ -8,6 +8,8 @@ global using DTLib;
 global using DTLib.Dtsod;
 global using DTLib.Filesystem;
 global using DTLib.Extensions;
+global using Launcher.Client;
+global using static Launcher.Client.LauncherClient;
 global using static Launcher.Client.Avalonia.LauncherMain;
 using Launcher.Client.Avalonia.GUI;
 
@@ -15,31 +17,24 @@ namespace Launcher.Client.Avalonia;
 
 public static class LauncherMain
 {
-    public static LauncherConfig Config;
-    public static readonly LauncherLogger Logger = new();
     public static LauncherWindow CurrentLauncherWindow;
 
+    public static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .LogToTrace();
+    
     public static void Main(string[] args)
     {
         try
         {
-            Config = new LauncherConfig();
-            Directory.Create("descriptors");
-            Directory.Create("icons");
-            Directory.Create("backgrounds");
-            Directory.Create("installed");
-            Directory.Create("settings");
-            File.WriteAllText($"descriptors{Путь.Разд}default.descriptor.template",
-                EmbeddedResources.ReadText("Launcher.Client.Avalonia.Resources.default.descriptor.template"));
+            LauncherClient.Init();
             
             var traceHandler = new ConsoleTraceListener();
             Trace.AutoFlush = true;
             Trace.Listeners.Add(traceHandler);
-            
-            AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .LogToTrace()
-                .StartWithClassicDesktopLifetime(args);
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            throw new Exception("aaa");
         }
         catch (Exception ex)
         { 

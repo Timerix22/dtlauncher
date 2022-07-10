@@ -25,6 +25,7 @@
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
     <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
+    <ProjectReference Include="..\Launcher.Client\Launcher.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

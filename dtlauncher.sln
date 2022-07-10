@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32104.313
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-server", "launcher-server\launcher-server.csproj", "{1F4D14EB-AF48-4B6C-A91B-B294D4281173}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher.Server", "Launcher.Server\Launcher.Server.csproj", "{1F4D14EB-AF48-4B6C-A91B-B294D4281173}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-client-wpf", "launcher-client-wpf\launcher-client-wpf.csproj", "{A1F770F3-F6B1-4854-9BF0-093F85064B88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher.Client.WPF", "Launcher.Client.WPF\Launcher.Client.WPF.csproj", "{A1F770F3-F6B1-4854-9BF0-093F85064B88}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{F567AA49-E96B-43BD-95B5-A71F9FCB64E1}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-client-avalonia", "launcher-client-avalonia\launcher-client-avalonia.csproj", "{BC1FC2A0-159A-4F17-B076-B39775FB6AAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher.Client.Avalonia", "Launcher.Client.Avalonia\Launcher.Client.Avalonia.csproj", "{BC1FC2A0-159A-4F17-B076-B39775FB6AAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher.Client", "Launcher.Client\Launcher.Client.csproj", "{87427137-840D-4D09-A101-9481110682BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BC1FC2A0-159A-4F17-B076-B39775FB6AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC1FC2A0-159A-4F17-B076-B39775FB6AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC1FC2A0-159A-4F17-B076-B39775FB6AAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87427137-840D-4D09-A101-9481110682BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87427137-840D-4D09-A101-9481110682BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87427137-840D-4D09-A101-9481110682BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87427137-840D-4D09-A101-9481110682BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,27 +9,20 @@ global using System.Text;
 global using System.Collections.Generic;
 global using System.Linq;
 global using System.Windows;
-global using  static Launcher.Client.WPF.LauncherMain;
+global using Launcher.Client;
+global using static Launcher.Client.LauncherClient;
+global using static Launcher.Client.WPF.LauncherMain;
 using Launcher.Client.WPF.GUI;
 
 namespace Launcher.Client.WPF;
 
 public static class LauncherMain
 {
-    public static LauncherConfig Config;
-    public static readonly LauncherLogger Logger = new();
     public static LauncherWindow CurrentLauncherWindow;
     
     public static void _Main(string[] args)
     {
-        Config = new LauncherConfig();
-        Directory.Create("descriptors");
-        Directory.Create("icons");
-        Directory.Create("backgrounds");
-        Directory.Create("installed");
-        Directory.Create("settings");
-        File.WriteAllText($"descriptors{Путь.Разд}default.descriptor.template",
-            EmbeddedResources.ReadText("Launcher.Client.WPF.Resources.default.descriptor.template"));
+        LauncherClient.Init();
         CurrentLauncherWindow = new LauncherWindow();
         CurrentLauncherWindow.Show();
     }

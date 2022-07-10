@@ -10,6 +10,7 @@ global using System.Text;
 global using System.Threading;
 global using System.Linq;
 using System.Globalization;
+using  DTLib.Logging;
 
 namespace Launcher.Server;
 
@@ -17,7 +18,7 @@ static class Server
 {
     static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     static DtsodV23 config;
-    private static readonly DTLib.Loggers.ConsoleLogger Logger = new("logs", "launcher-server");
+    private static readonly ConsoleLogger Logger = new("logs", "launcher-server");
 
     static readonly object manifestLocker = new();
 
@@ -29,7 +30,6 @@ static class Server
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
             PublicLog.LogEvent += Logger.Log;
-            PublicLog.LogNoTimeEvent += Logger.Log;
             config = new DtsodV23(File.ReadAllText("launcher-server.dtsod"));
             Logger.Log("b", "local address: <", "c", config["local_ip"], "b",
                 ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",

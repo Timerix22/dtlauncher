@@ -21,7 +21,10 @@ public partial class App : Application
             _Main(e.Args);
         }
         catch(Exception ex)
-        { LogError("STARTUP",ex); }
+        { 
+            LogError("STARTUP",ex);
+            Shutdown();
+        }
     }
 }
 

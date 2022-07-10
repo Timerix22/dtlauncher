@@ -7,31 +7,26 @@ public partial class LauncherWindow : Window
 {
     public LauncherWindow()
     {
-        try
-        {
-            InitializeComponent();
-            LogBox.Text = Logger.Buffer;
-            Logger.MessageSent += LogHandler;
-            LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Путь.Разд)+1);
-            LogfileLabel.PointerPressed += (_,_)=>
-                Process.Start("explorer.exe", LauncherLogger.LogfileDir);
-            LogfileLabel.PointerEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
-            LogfileLabel.PointerLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
-            LibraryButton.TabGrid = LibraryGrid;
-            DownloadsButton.TabGrid = DownloadsGrid;
-            LogButton.TabGrid = LogGrid;
-            SettingsButton.TabGrid = SettingsGrid;
-            LibraryButton.Click += SelectTab;
-            DownloadsButton.Click += SelectTab;
-            LogButton.Click += SelectTab;
-            SettingsButton.Click += SelectTab;
-            ProgramGrid.IsVisible = false;
-            SelectTab(LibraryButton, null);
-            FillProgramsPanel();
-            Logger.Log("launcher started");
-        }
-        catch(Exception ex)
-        { LogError("LAUNCHER WINDOW INIT",ex); }
+        InitializeComponent();
+        LogBox.Text = Logger.Buffer;
+        Logger.MessageSent += LogHandler;
+        LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Путь.Разд)+1);
+        LogfileLabel.PointerPressed += (_,_)=>
+            Process.Start("explorer.exe", LauncherLogger.LogfileDir);
+        LogfileLabel.PointerEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
+        LogfileLabel.PointerLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
+        LibraryButton.TabGrid = LibraryGrid;
+        DownloadsButton.TabGrid = DownloadsGrid;
+        LogButton.TabGrid = LogGrid;
+        SettingsButton.TabGrid = SettingsGrid;
+        LibraryButton.Click += SelectTab;
+        DownloadsButton.Click += SelectTab;
+        LogButton.Click += SelectTab;
+        SettingsButton.Click += SelectTab;
+        ProgramGrid.IsVisible = false;
+        SelectTab(LibraryButton, null);
+        FillProgramsPanel();
+        Logger.Log("launcher started");
     }
 
     void LogHandler(string m) => Dispatcher.UIThread.InvokeAsync(()=>LogBox.Text += m);

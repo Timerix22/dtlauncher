@@ -1,15 +1,14 @@
-﻿using DTLib.Loggers;
+﻿using DTLib.Logging;
 
-namespace Launcher.Client.WPF;
+namespace Launcher.Client;
 
 public class LauncherLogger : ConsoleLogger
 {
     public const string LogfileDir = "launcher-logs";
-    public LauncherLogger() : base(LogfileDir,"launcher-client-wpf")
-    { }
+    public LauncherLogger() : base(LogfileDir,"launcher-client") {}
     
     private readonly StringBuilder _buffer = new();
-    public string Buffer  
+    public string Buffer 
     {
         get { lock (_buffer) return _buffer.ToString(); }
     }
