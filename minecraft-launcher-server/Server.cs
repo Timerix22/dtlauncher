@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Threading;
 using DTLib;
 using DTLib.Dtsod;
@@ -15,8 +10,6 @@ using DTLib.Extensions;
 using DTLib.Filesystem;
 using DTLib.Logging;
 using DTLib.Network;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace launcher_server;
 

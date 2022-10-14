@@ -79,7 +79,7 @@ internal static partial class Launcher
             tabs.Log = "";
             tabs.Current = "";
             var hasher = new Hasher();
-            var password_hash = new byte[0];
+            var password_hash = Array.Empty<byte>();
             // username
             var username = "";
             if (!config.Username.IsNullOrEmpty())
