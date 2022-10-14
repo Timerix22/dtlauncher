@@ -12,4 +12,9 @@
     <ProjectReference Include="..\..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
     <ProjectReference Include="..\..\..\DTLib\DTLib\DTLib.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="launcher-server.dtsod">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

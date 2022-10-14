@@ -5,11 +5,15 @@
         <Nullable>disable</Nullable>
         <OutputType>Exe</OutputType>
         <RootNamespace>launcher_client</RootNamespace>
-        <AssemblyName>minecraft-launcher-client</AssemblyName>
+        <AssemblyName>minecraft-launcher</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
         <ProjectReference Include="..\..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
         <ProjectReference Include="..\..\..\DTLib\DTLib\DTLib.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="gui\exit.gui" />
+      <EmbeddedResource Include="gui\**" />
     </ItemGroup>
 </Project>
