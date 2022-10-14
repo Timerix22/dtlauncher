@@ -166,14 +166,6 @@ internal static partial class Launcher
                                 Info.Log("g", "client updated");
                             }
 
-                            if (!config.UUID.IsNullOrEmpty())
-                            {
-                                Info.Log("y", "uuid not found in config. requesting from server");
-                                mainSocket.SendPackage("requesting uuid".ToBytes());
-                                var uuid = mainSocket.GetPackage().BytesToString();
-                                config.UUID = uuid;
-                            }
-
                             config.Save();
                             // запуск майнкрафта
                             Info.Log("g", "launching minecraft");

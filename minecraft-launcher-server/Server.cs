@@ -113,7 +113,7 @@ static class Server
             }
             // запрос от юзера
 
-            if (FindUser(hash, out var user))
+            if (TryFindUser(hash, out var user))
             {
                 Info.Log("b", "user is ", "c", user.name);
                 handlerSocket.SendPackage("launcher".ToBytes());
@@ -194,7 +194,7 @@ static class Server
         }
     }
 
-    static bool FindUser(byte[] hash, out (string name, string uuid) user)
+    static bool TryFindUser(byte[] hash, out (string name, string uuid) user)
     {
         DtsodV23 usersdb = new(File.ReadAllText("users.dtsod"));
         user = new();
@@ -206,17 +206,5 @@ static class Server
         }
 
         return false;
-    }
-
-    static string GetUUID(string username)
-    {
-        var response=new HttpClient().GetAsync(
-            $"https://api.mojang.com/users/profiles/minecraft/{username}")
-            .GetAwaiter().GetResult();
-        var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-        JObject json = (JObject)JsonConvert.DeserializeObject(content)
-            ?? throw new Exception("cant parse to json:\n"+content);
-        var uuid = json["id"] ?? throw new Exception("cant het id from json:\n"+content);
-        return uuid.Value<string>();
     }
 }
