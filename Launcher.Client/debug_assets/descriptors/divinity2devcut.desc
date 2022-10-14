@@ -1,0 +1,7 @@
+#descriptor_version: 3;
+name: "Divinity 2 Developer's Cut";
+description: "РПГ от Larian. Вид от третьего лица, проработанный мир, интересная боёвка.";
+directory: "divinity2_devcut"; 
+icon: "divinity2devcut.png";
+background: "divinity2devcut_background.jpg";
+launchcommand: "";

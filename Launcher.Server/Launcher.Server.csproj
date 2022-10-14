@@ -12,9 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
-    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
-    <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
+    <ProjectReference Include="..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
+    <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
+    <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

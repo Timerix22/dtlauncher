@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+    
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
@@ -9,16 +9,19 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-    
-    <ItemGroup>
-        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.dll" />
-        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Dtsod.dll" />
-        <Reference Include="..\..\DTLib\bin\Release\net6.0\DTLib.Network.dll" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <EmbeddedResource Include="Resources\default.descriptor.template" />
-      <EmbeddedResource Include="Resources\launcher.dtsod" />
-    </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
+        <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
+        <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Compile Remove="Resources\**\*" />
+        <Compile Remove="debug_assets\**\*" />
+        <EmbeddedResource Include="Resources\launcher.dtsod" />
+        <EmbeddedResource Include="Resources\default.descriptor.template" />
+        <None Update="debug_assets\**\*" CopyToOutputDirectory="Always" Condition="'$(Configuration)' == 'Debug'" />
+    </ItemGroup>
+    
 </Project>

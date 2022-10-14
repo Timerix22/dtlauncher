@@ -1,6 +1,7 @@
-﻿name: "";           #label, which displays in launcher
-directory: "";      #name of program' directory on server and client
+﻿#descriptor_version: 3;
+name: "";           #label, which displays in launcher
 description: "";    #desctiption, which displays in launcher
+directory: "";      #name of program directory on server and client
 icon: "";           #name of the icon file
 background: "";     #name of the background file
 launchcommand: "";  #command, which starts the program

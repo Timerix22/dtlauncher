@@ -19,6 +19,7 @@ public static class LauncherMain
 {
     public static LauncherWindow CurrentLauncherWindow;
 
+    //it's being used by Avalonia xml preview
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<App>()
             .UsePlatformDetect()
@@ -29,7 +30,6 @@ public static class LauncherMain
         try
         {
             LauncherClient.Init();
-            
             var traceHandler = new ConsoleTraceListener();
             Trace.AutoFlush = true;
             Trace.Listeners.Add(traceHandler);

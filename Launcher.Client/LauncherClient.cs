@@ -20,6 +20,14 @@ public static class LauncherClient
     {
         Logger.Log("launcher starting...");
         Config = new LauncherConfig();
+#if DEBUG
+        const string debug_assets = "debug_assets";
+        foreach (string file in Directory.GetFiles(debug_assets))
+            File.Copy(file, file.Remove(0, file.LastIndexOf(Путь.Разд) + 1), true);
+        foreach (string subdir in Directory.GetDirectories(debug_assets))
+            Directory.Copy(subdir, subdir.Remove(0, subdir.LastIndexOf(Путь.Разд) + 1), true);
+        Directory.Delete(debug_assets);
+#endif
         Directory.Create("descriptors");
         Directory.Create("icons");
         Directory.Create("backgrounds");

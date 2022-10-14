@@ -1,0 +1,7 @@
+#descriptor_version: 3;
+name: "Conan Exiles";
+description: "Сурвайвл на анриале в сеттинге Конана Варвара.";
+directory: "conan_exiles";
+icon: "conan_exiles.png";
+background: "conan_exiles_background.png";
+launchcommand: "cmd /c echo hello && pause";
