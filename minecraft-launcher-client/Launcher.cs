@@ -122,38 +122,16 @@ internal static partial class Launcher
                             RenderTab(tabs.Login);
                         }
                         break;
-                    case ConsoleKey.P:
-                        if (tabs.Current == tabs.Login)
-                        {
-                            tabs.Login = tabs.Login
-                                .Remove(991, 20).Insert(991,   "┏━━━━━━━━━━━━━━━━━━┓")
-                                .Remove(1071, 20).Insert(1071, "┃                  ┃")
-                                .Remove(1151, 20).Insert(1151, "┗━━━━━━━━━━━━━━━━━━┛");
-                            RenderTab(tabs.Login);
-                            var password = ReadString(33, 13, 15);
-                            tabs.Login = tabs.Login
-                                .Remove(991, 20).Insert(991,   "┌──────────────────┐")
-                                .Remove(1071, 20).Insert(1071, "│                  │")
-                                .Remove(1151, 20).Insert(1151, "└──────────────────┘");
-                            RenderTab(tabs.Login);
-                            if (password.Length < 8)
-                                throw new Exception("password length should be > 7 and < 17");
-                            password_hash = hasher.HashCycled(password.ToBytes(), 64);
-                            tabs.Login = tabs.Login.Remove(1073, password.Length)
-                                .Insert(1073, "*".Multiply(password.Length));
-                            RenderTab(tabs.Login);
-                        }
-                        break;
                     case ConsoleKey.L:
                         if (tabs.Current == tabs.Login)
                         {
                             RenderTab(tabs.Current);
-                            if (username.Length < 5) throw new Exception("username is too short");
-                            if (password_hash.Length == 0) throw new Exception("pasword is null");
+                            if (username.Length < 2) throw new Exception("username is too short");
+                            
                             // обновление клиента
                             if (!offline)
                             {
-                                Connect(hasher.HashCycled(username.ToBytes(), password_hash, 64), "launcher");
+                                Connect("updater".ToBytes(), "updater");
                                 //обновление файлов клиента
                                 Info.Log("b", "updating client...");
                                 FSP.DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
@@ -166,35 +144,12 @@ internal static partial class Launcher
                                 Info.Log("g", "client updated");
                             }
 
-                            config.Save();
                             // запуск майнкрафта
                             Info.Log("g", "launching minecraft");
                             LaunchGame(config.JavaPath, config.Username, config.UUID,
                                 config.GameMemory, config.GameWindowWidth, config.GameWindowHeight);
                             gameProcess.WaitForExit();
                             Info.Log("b", "minecraft closed");
-                        }
-                        break;
-                    case ConsoleKey.R:
-                        if (tabs.Current == tabs.Login && !offline)
-                        {
-                            RenderTab(tabs.Current);
-                            if (username.Length < 5) throw new Exception("username is too short");
-                            if (password_hash.Length == 0) throw new Exception("pasword is null");
-                            Connect("updater".ToBytes(), "updater");
-                            mainSocket.SendPackage("register new user".ToBytes());
-                            mainSocket.GetAnswer("ready");
-                            mainSocket.SendPackage(hasher.HashCycled(username.ToBytes(), password_hash, 64));
-                            mainSocket.SendPackage(username.ToBytes());
-                            Thread.Sleep(300);
-                            Console.Write(".");
-                            Thread.Sleep(300);
-                            Console.Write(".");
-                            Thread.Sleep(300);
-                            Console.Write(".");
-                            Thread.Sleep(300);
-                            Console.Write(".");
-                            Info.Log("g", "registration request sent");
                         }
                         break;
                     case ConsoleKey.F2:

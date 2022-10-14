@@ -83,62 +83,13 @@ static class Server
                         switch (request)
                         {
                             case "requesting launcher update":
-                                Info.Log("b", "updater requested launcher update");
+                                Info.Log("c","updater", "b", " requested launcher update");
                                 fsp.UploadFile("share\\minecraft-launcher.exe");
                                 break;
-                            case "register new user":
-                                Info.Log("b", "new user registration requested");
-                                handlerSocket.SendPackage("ready".ToBytes());
-                                var req = StringConverter.MergeToString(
-                                    hasher.HashCycled(handlerSocket.GetPackage(), 64).HashToString(),
-                                    ":\n{\n\tusername: \"", handlerSocket.GetPackage().BytesToString(),
-                                    "\";\n\tuuid: \"null\";\n};");
-                                var filepath = $"registration_requests\\{DateTime.Now.ToString(MyTimeFormat.ForFileNames)}.req";
-                                File.WriteAllText(filepath, req);
-                                Info.Log("b", "text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
-                                break;
-                            default:
-                                throw new Exception("unknown request: " + request);
-                        }
-                    }
-                    else Thread.Sleep(10);
-                }
-            }
-            // запрос от юзера
-
-            if (TryFindUser(hash, out var user))
-            {
-                Info.Log("b", "user is ", "c", user.name);
-                handlerSocket.SendPackage("launcher".ToBytes());
-                // обработка запросов
-                while (true)
-                {
-                    if (handlerSocket.Available >= 2)
-                    {
-                        var request = handlerSocket.GetPackage().BytesToString();
-                        switch (request)
-                        {
                             case "requesting file download":
                                 var file = handlerSocket.GetPackage().BytesToString();
-                                Info.Log("b", "user ", "c", user.name, "b", " requested file ", "c", file + "");
-                                if (file == "manifest.dtsod")
-                                {
-                                    lock (manifestLocker) fsp.UploadFile("share\\manifest.dtsod");
-                                }
-                                else fsp.UploadFile("share\\" + file);
-                                break;
-                            case "requesting uuid":
-                                Info.Log("b", "user ", "c", user.name, "b", " requested uuid");
-                                handlerSocket.SendPackage(user.uuid.ToBytes());
-                                break;
-                            case "excess files found":
-                                Info.Log("b", "user ", "c", user.name, "b", " sent excess files list");
-                                fsp.DownloadFile($"excesses\\{user.name}-{DateTime.Now.ToString(MyTimeFormat.ForFileNames)}.txt");
-                                break;
-                            case "sending launcher error":
-                                Info.Log("y", "user ", "c", user.name, "y", "is sending error:");
-                                string error = handlerSocket.GetPackage().BytesToString();
-                                Info.Log("y", error + '\n');
+                                Info.Log("b", "user ", "c","updater", "b", " requested file ", "c", file + "");
+                                fsp.UploadFile($"share\\{file}");
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -185,19 +136,5 @@ static class Server
                     .MergeToString("\", \"").Replace("share\\sync_and_remove\\", "")
                 +"\"];");
         }
-    }
-
-    static bool TryFindUser(byte[] hash, out (string name, string uuid) user)
-    {
-        DtsodV23 usersdb = new(File.ReadAllText("users.dtsod"));
-        user = new();
-        if (usersdb.ContainsKey(hash.HashToString()))
-        {
-            user.name = usersdb[hash.HashToString()]["username"];
-            user.uuid = usersdb[hash.HashToString()]["uuid"];
-            return true;
-        }
-
-        return false;
     }
 }
