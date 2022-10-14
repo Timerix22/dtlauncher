@@ -148,8 +148,8 @@ internal static partial class Launcher
                             Info.Log("g", "launching minecraft");
                             LaunchGame(config.JavaPath, config.Username, config.UUID,
                                 config.GameMemory, config.GameWindowWidth, config.GameWindowHeight);
-                            gameProcess.WaitForExit();
-                            Info.Log("b", "minecraft closed");
+                            // gameProcess.WaitForExit();
+                            // Info.Log("b", "minecraft closed");
                         }
                         break;
                     case ConsoleKey.F2:
