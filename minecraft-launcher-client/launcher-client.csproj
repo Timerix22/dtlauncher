@@ -6,6 +6,7 @@
         <OutputType>Exe</OutputType>
         <RootNamespace>launcher_client</RootNamespace>
         <AssemblyName>minecraft-launcher</AssemblyName>
+        <ApplicationIcon>launcher.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
