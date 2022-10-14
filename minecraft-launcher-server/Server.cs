@@ -1,22 +1,25 @@
-﻿using DTLib;
-using DTLib.Dtsod;
-using DTLib.Filesystem;
-using DTLib.Network;
-using System;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Linq;
+using DTLib;
+using DTLib.Dtsod;
+using DTLib.Extensions;
+using DTLib.Filesystem;
+using DTLib.Logging;
+using DTLib.Network;
 
 namespace launcher_server
 {
-    class Server
+    static class Server
     {
-        static readonly string logfile = $"logs\\launcher-server_{DateTime.Now}.log".Replace(':', '-').Replace(' ', '_');
+        private static ConsoleLogger Info = new("logs","info");
+        private static ConsoleLogger Error = new("logs","error");
         static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        static DtsodV22 config;
-        static bool debug = false;
+        static DtsodV23 config;
+        static bool debug;
 
         static object manifestLocker = new();
 
@@ -27,64 +30,37 @@ namespace launcher_server
                 Console.Title = "minecraft_launcher_server";
                 Console.InputEncoding = Encoding.Unicode;
                 Console.OutputEncoding = Encoding.Unicode;
-                PublicLog.LogEvent += Log;
-                PublicLog.LogNoTimeEvent += LogNoTime;
-                config = new DtsodV22(File.ReadAllText("launcher-server.dtsod"));
+                PublicLog.LogEvent += Info.Log;
+                config = new DtsodV23(File.ReadAllText("launcher-server.dtsod"));
                 if (args.Contains("debug")) debug = true;
-                Log("b", "local address: <", "c", config["local_ip"], "b",
+                Info.Log("b", "local address: <", "c", config["local_ip"], "b",
                     ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",
-                    ">\nport: <", "c", config["local_port"].ToString(), "b", ">\n");
+                    ">\nport: <", "c", config["local_port"].ToString(), "b", ">");
                 mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["local_ip"]), config["local_port"]));
                 mainSocket.Listen(1000);
                 CreateManifestы();
-                Log("g", "server started succesfully\n");
+                Info.Log("g", "server started succesfully");
                 // запуск отдельного потока для каждого юзера
-                Log("b", "waiting for users\n");
+                Info.Log("b", "waiting for users");
                 while (true)
                 {
                     var userSocket = mainSocket.Accept();
-                    var userThread = new Thread(new ParameterizedThreadStart((obj) => UserHandle((Socket)obj)));
+                    var userThread = new Thread(obj => UserHandle((Socket)obj));
                     userThread.Start(userSocket);
                 }
             }
             catch (Exception ex)
             {
-                Log("r", $"Server.Main() error:\n{ex.Message}\n{ex.StackTrace}\n");
+                Error.Log("r", $"{ex.Message}\n{ex.StackTrace}");
                 mainSocket.Close();
             }
-            Log("press any key to close... ");
-            Console.ReadKey();
-            Log("gray", "\n");
-        }
-
-        // вывод лога в консоль и файл
-        public static void Log(params string[] msg)
-        {
-            if (msg.Length == 1) msg[0] = "[" + DateTime.Now.ToString() + "]: " + msg[0];
-            else msg[1] = "[" + DateTime.Now.ToString() + "]: " + msg[1];
-            LogNoTime(msg);
-        }
-
-        public static void LogNoTime(params string[] msg)
-        {
-            lock (new object())
-            {
-                ColoredConsole.Write(msg);
-                if (msg.Length == 1) File.AppendAllText(logfile, msg[0]);
-                else
-                {
-                    StringBuilder strB = new();
-                    for (ushort i = 0; i < msg.Length; i++)
-                        strB.Append(msg[++i]);
-                    File.AppendAllText(logfile, strB.ToString());
-                }
-            }
+            Info.Log("gray", "");
         }
 
         // запускается для каждого юзера в отдельном потоке
         static void UserHandle(Socket handlerSocket)
         {
-            Log("b", "user connecting...  ");
+            Info.Log("b", "user connecting...  ");
             try
             {
                 // тут запрос пароля заменён запросом заглушки
@@ -96,7 +72,7 @@ namespace launcher_server
                 // запрос от апдейтера
                 if (hash.HashToString() == "39368b9c9ca9a74007acd2358fb7945cf172fc86c93969d0933e40aee6c10ca8")
                 {
-                    LogNoTime("b", "user is ", "c", "updater\n");
+                    Info.Log("b", "user is ", "c", "updater");
                     handlerSocket.SendPackage("updater".ToBytes());
                     // обработка запросов
                     while (true)
@@ -107,19 +83,19 @@ namespace launcher_server
                             switch (request)
                             {
                                 case "requesting launcher update":
-                                    Log("b", "updater requested client.exe\n");
+                                    Info.Log("b", "updater requested client.exe");
                                     fsp.UploadFile("share\\launcher.exe");
                                     break;
                                 case "register new user":
-                                    Log("b", "new user registration requested\n");
+                                    Info.Log("b", "new user registration requested");
                                     handlerSocket.SendPackage("ready".ToBytes());
-                                    var req = FrameworkFix.MergeToString(
+                                    var req = StringConverter.MergeToString(
                                             hasher.HashCycled(handlerSocket.GetPackage(), 64).HashToString(),
                                             ":\n{\n\tusername: \"", handlerSocket.GetPackage().ToString(),
-                                            "\";\n\tuuid: \"null\";\n};\n");
-                                    var filepath = $"registration_requests\\{DateTime.Now.ToString().Replace(':', '-').Replace(' ', '_')}.req";
+                                            "\";\n\tuuid: \"null\";\n};");
+                                    var filepath = $"registration_requests\\{DateTime.Now.ToString(MyTimeFormat.ForFileNames)}.req";
                                     File.WriteAllText(filepath, req);
-                                    Log("b", $"text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">\n");
+                                    Info.Log("b", "text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
                                     break;
                                 default:
                                     throw new Exception("unknown request: " + request);
@@ -129,9 +105,10 @@ namespace launcher_server
                     }
                 }
                 // запрос от юзера
-                else if (FindUser(hash, out var user))
+
+                if (FindUser(hash, out var user))
                 {
-                    LogNoTime("b", $"user is ", "c", user.name + "\n");
+                    Info.Log("b", "user is ", "c", user.name);
                     handlerSocket.SendPackage("launcher".ToBytes());
                     // обработка запросов
                     while (true)
@@ -143,7 +120,7 @@ namespace launcher_server
                             {
                                 case "requesting file download":
                                     var file = handlerSocket.GetPackage().ToString();
-                                    Log("b", $"user ", "c", user.name, "b", " requested file ", "c", file + "\n");
+                                    Info.Log("b", "user ", "c", user.name, "b", " requested file ", "c", file + "");
                                     if (file == "manifest.dtsod")
                                     {
                                         lock (manifestLocker) fsp.UploadFile("share\\manifest.dtsod");
@@ -151,17 +128,17 @@ namespace launcher_server
                                     else fsp.UploadFile("share\\" + file);
                                     break;
                                 case "requesting uuid":
-                                    Log("b", $"user ", "c", user.name, "b", " requested uuid\n");
+                                    Info.Log("b", "user ", "c", user.name, "b", " requested uuid");
                                     handlerSocket.SendPackage(user.uuid.ToBytes());
                                     break;
                                 case "excess files found":
-                                    Log("b", $"user ", "c", user.name, "b", " sent excess files list\n");
-                                    fsp.DownloadFile($"excesses\\{user.name}-{DateTime.Now.ToString().Replace(':', '-').Replace(' ', '_')}.txt");
+                                    Info.Log("b", "user ", "c", user.name, "b", " sent excess files list");
+                                    fsp.DownloadFile($"excesses\\{user.name}-{DateTime.Now.ToString(MyTimeFormat.ForFileNames)}.txt");
                                     break;
                                 case "sending launcher error":
-                                    Log("y", "user ", "c", user.name, "y", "is sending error:\n");
+                                    Info.Log("y", "user ", "c", user.name, "y", "is sending error:");
                                     string error = handlerSocket.GetPackage().ToString();
-                                    Log("y", error + '\n');
+                                    Info.Log("y", error + '\n');
                                     break;
                                 default:
                                     throw new Exception("unknown request: " + request);
@@ -171,21 +148,19 @@ namespace launcher_server
                     }
                 }
                 // неизвестный юзер
-                else
-                {
-                    LogNoTime("y", $"user with hash <{hash.HashToString()}> not found\n");
-                    handlerSocket.SendPackage("user not found".ToBytes());
-                }
+
+                Error.Log("y", $"user with hash <{hash.HashToString()}> not found");
+                handlerSocket.SendPackage("user not found".ToBytes());
             }
             catch (Exception ex)
             {
-                Log("y", $"UserStart() error:\n message:\n  {ex.Message}\n{ex.StackTrace}\n");
+                Error.Log("y", $"{ex.Message}\n{ex.StackTrace}");
             }
             finally
             {
                 if (handlerSocket.Connected) handlerSocket.Shutdown(SocketShutdown.Both);
                 handlerSocket.Close();
-                Log("g", "user disconnected\n");
+                Info.Log("g", "user disconnected");
             }
         }
 
@@ -198,13 +173,16 @@ namespace launcher_server
                 foreach (string dir in Directory.GetDirectories("share\\sync_and_remove"))
                     FSP.CreateManifest(dir);
                 File.WriteAllText("share\\sync_and_remove\\dirlist.dtsod",
-                    $"dirs: [\"{Directory.GetDirectories("share\\sync_and_remove").MergeToString("\",\"").Replace("share\\sync_and_remove\\", "")}\"];\n");
-            };
+                    "dirs: [\""
+                    +Directory.GetDirectories("share\\sync_and_remove")
+                        .MergeToString("\", \"").Replace("share\\sync_and_remove\\", "")
+                    +"\"];");
+            }
         }
 
         static bool FindUser(byte[] hash, out (string name, string uuid) user)
         {
-            DtsodV22 usersdb = new(File.ReadAllText("users.dtsod"));
+            DtsodV23 usersdb = new(File.ReadAllText("users.dtsod"));
             user = new();
             if (usersdb.ContainsKey(hash.HashToString()))
             {
@@ -212,7 +190,8 @@ namespace launcher_server
                 user.uuid = usersdb[hash.HashToString()]["uuid"];
                 return true;
             }
-            else return false;
+
+            return false;
         }
     }
 }

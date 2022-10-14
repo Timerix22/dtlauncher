@@ -7,7 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-client", "minecraf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher-server", "minecraft-launcher-server\launcher-server.csproj", "{1DC6892C-5DC8-4C1C-94C1-CE695BD2DBC2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTLib", "..\DTLib\DTLib\DTLib.csproj", "{57CDC0EF-31C9-4859-90E5-AD0B302C5EAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTLib", "..\..\DTLib\DTLib\DTLib.csproj", "{57CDC0EF-31C9-4859-90E5-AD0B302C5EAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib.Dtsod", "..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj", "{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTLib.Network", "..\..\DTLib\DTLib.Network\DTLib.Network.csproj", "{876103FA-6B0D-4322-B66D-0DFEEEFABD82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,22 @@ Global
 		{57CDC0EF-31C9-4859-90E5-AD0B302C5EAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{57CDC0EF-31C9-4859-90E5-AD0B302C5EAE}.Release-net48|Any CPU.ActiveCfg = Release-net48|Any CPU
 		{57CDC0EF-31C9-4859-90E5-AD0B302C5EAE}.Release-net48|Any CPU.Build.0 = Release-net48|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Build|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Build|Any CPU.Build.0 = Debug|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Release-net48|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6C1C6E-59A4-4C49-90ED-6D8A9F55F349}.Release-net48|Any CPU.Build.0 = Debug|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Build|Any CPU.ActiveCfg = Debug|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Build|Any CPU.Build.0 = Debug|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Release-net48|Any CPU.ActiveCfg = Release-net48|Any CPU
+		{876103FA-6B0D-4322-B66D-0DFEEEFABD82}.Release-net48|Any CPU.Build.0 = Release-net48|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
