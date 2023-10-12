@@ -34,7 +34,6 @@ public static class LauncherMain
             Trace.AutoFlush = true;
             Trace.Listeners.Add(traceHandler);
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-            throw new Exception("aaa");
         }
         catch (Exception ex)
         { 
@@ -45,7 +44,7 @@ public static class LauncherMain
     public static void LogError(string context, Exception ex)
     {
         string errmsg = $"{ex.Message}\n{ex.StackTrace}";
-        //MessageBox.Show($"{context} ERROR", errmsg);
+        MessageBox.Show($"{context} ERROR", errmsg);
         Logger.Log(errmsg);
     }
 }

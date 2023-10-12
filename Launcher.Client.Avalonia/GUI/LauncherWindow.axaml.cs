@@ -27,6 +27,14 @@ public partial class LauncherWindow : Window
         SelectTab(LibraryButton, null);
         FillProgramsPanel();
         Logger.Log("launcher started");
+        try
+        {
+            throw new Exception("aaa");
+        }
+        catch (Exception ex)
+        {
+            LogError("main window", ex);
+        }
     }
 
     void LogHandler(string m) => Dispatcher.UIThread.InvokeAsync(()=>LogBox.Text += m);

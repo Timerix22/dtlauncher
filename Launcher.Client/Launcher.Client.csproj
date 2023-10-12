@@ -18,9 +18,8 @@
     
     <ItemGroup>
         <Compile Remove="Resources\**\*" />
+        <EmbeddedResource Include="Resources\**\*" />
         <Compile Remove="debug_assets\**\*" />
-        <EmbeddedResource Include="Resources\launcher.dtsod" />
-        <EmbeddedResource Include="Resources\default.descriptor.template" />
         <None Update="debug_assets\**\*" CopyToOutputDirectory="Always" Condition="'$(Configuration)' == 'Debug'" />
     </ItemGroup>
     
