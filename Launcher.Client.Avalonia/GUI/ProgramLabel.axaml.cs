@@ -9,6 +9,6 @@ public partial class ProgramLabel : UserControl
         InitializeComponent();
         NameLabel.Content = label;
         IconImage.Source = new Bitmap(
-            $"{Directory.GetCurrent()}{Путь.Разд}icons{Путь.Разд}{icon}");
+            $"{Directory.GetCurrent()}{Path.Sep}icons{Path.Sep}{icon}");
     }
 }

@@ -12,6 +12,8 @@ global using System.Windows;
 global using Launcher.Client;
 global using static Launcher.Client.LauncherClient;
 global using static Launcher.Client.WPF.LauncherMain;
+using DTLib.Ben.Demystifier;
+using DTLib.Logging;
 using Launcher.Client.WPF.GUI;
 
 namespace Launcher.Client.WPF;
@@ -22,6 +24,8 @@ public static class LauncherMain
     
     public static void _Main(string[] args)
     {
+        Console.WriteLine("aaa\nbbb\nccc");
+        return;
         LauncherClient.Init();
         CurrentLauncherWindow = new LauncherWindow();
         CurrentLauncherWindow.Show();
@@ -29,8 +33,8 @@ public static class LauncherMain
 
     public static void LogError(string context, Exception ex)
     {
-        string errmsg = $"{context} ERROR:\n{ex}";
+        string errmsg = ex.ToStringDemystified();
         MessageBox.Show(errmsg);
-        Logger.Log(errmsg);
+        Logger.LogError(context, errmsg);
     }
 }

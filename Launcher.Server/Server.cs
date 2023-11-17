@@ -9,8 +9,7 @@ global using System.Net.Sockets;
 global using System.Text;
 global using System.Threading;
 global using System.Linq;
-using System.Globalization;
-using  DTLib.Logging;
+using DTLib.Logging;
 
 namespace Launcher.Server;
 
@@ -18,7 +17,9 @@ static class Server
 {
     static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     static DtsodV23 config;
-    private static readonly ConsoleLogger Logger = new("logs", "launcher-server");
+    private static readonly CompositeLogger Logger = new(
+        new ConsoleLogger(),
+        new FileLogger("logs", "launcher-server"));
 
     static readonly object manifestLocker = new();
 
@@ -29,40 +30,42 @@ static class Server
             Console.Title = "Launcher.Server";
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
-            PublicLog.LogEvent += Logger.Log;
+            DTLibInternalLogging.SetLogger(Logger);
             config = new DtsodV23(File.ReadAllText("launcher-server.dtsod"));
-            Logger.Log("b", "local address: <", "c", config["local_ip"], "b",
-                ">\npublic address: <", "c", OldNetwork.GetPublicIP(), "b",
-                ">\nport: <", "c", config["local_port"].ToString(), "b", ">");
+            Logger.LogInfo("Main", $"""
+                local address: {config["local_ip"]}
+                public address: {OldNetwork.GetPublicIP()}
+                port: {config["local_port"]}
+                """);
             mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["local_ip"]), config["local_port"]));
             mainSocket.Listen(1000);
             CreateManifests();
-            Logger.Log("g", "server started succesfully");
+            Logger.LogInfo("Main", "server started succesfully");
             // запуск отдельного потока для каждого юзера
-            Logger.Log("b", "waiting for users");
+            Logger.LogInfo("Main", "waiting for users");
             while (true)
             {
                 var userSocket = mainSocket.Accept();
-                var userThread = new Thread((obj) => UserHandle((Socket)obj));
+                var userThread = new Thread((obj) => HandleUser((Socket)obj));
                 userThread.Start(userSocket);
             }
         }
         catch (Exception ex)
         {
-            Logger.Log("r", ex.ToString());
+            Logger.LogError("Main", ex);
             if (mainSocket.Connected)
             {
                 mainSocket.Shutdown(SocketShutdown.Both);
                 mainSocket.Close();
             }
         }
-        Logger.Log("gray", "");
+        Console.ResetColor();
     }
 
     // запускается для каждого юзера в отдельном потоке
-    static void UserHandle(Socket handlerSocket)
+    static void HandleUser(Socket handlerSocket)
     {
-        Logger.Log("b", "user connecting...  ");
+        Logger.LogInfo("HandleUser", "user connecting...");
         try
         {
             // запрос хеша пароля и логина
@@ -73,7 +76,7 @@ static class Server
             // запрос от апдейтера
             if (hash == hasher.HashCycled("updater".ToBytes(),64))
             {
-                Logger.Log("b", "user is ", "c", "updater");
+                Logger.LogInfo("HandleUser", "user is updater");
                 handlerSocket.SendPackage("updater".ToBytes());
                 // обработка запросов
                 while (true)
@@ -84,19 +87,19 @@ static class Server
                         switch (request)
                         {
                             case "requesting launcher update":
-                                Logger.Log("b", "updater requested client.exe");
+                                Logger.LogInfo("HandleUser", "updater requested client.exe");
                                 fsp.UploadFile("share\\launcher.exe");
                                 break;
                             case "register new user":
-                                Logger.Log("b", "new user registration requested");
+                                Logger.LogInfo("HandleUser", "new user registration requested");
                                 handlerSocket.SendPackage("ready".ToBytes());
                                 string req = StringConverter.MergeToString(
                                     hasher.HashCycled(handlerSocket.GetPackage(), 64).HashToString(),
                                     ":\n{\n\tusername: \"", handlerSocket.GetPackage().ToString(),
                                     "\";\n\tuuid: \"null\";\n};");
-                                string filepath = $"registration_requests\\{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.req";
+                                var filepath = Path.Concat("registration_requests", DateTime.Now.ToString(MyTimeFormat.ForFileNames), ".req");
                                 File.WriteAllText(filepath, req);
-                                Logger.Log("b", $"text wrote to file <", "c", $"registration_requests\\{filepath}", "b", ">");
+                                Logger.LogInfo("HandleUser", $"text wrote to file <{filepath}>");
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -108,7 +111,7 @@ static class Server
             // запрос от юзера
             else if (FindUser(hash, out var user))
             {
-                Logger.Log("b", $"user is ", "c", user.name);
+                Logger.LogInfo("HandleUser", "user is " + user.name);
                 handlerSocket.SendPackage("launcher".ToBytes());
                 // обработка запросов
                 while (true)
@@ -119,27 +122,26 @@ static class Server
                         switch (request)
                         {
                             case "requesting file download":
-                                var file = handlerSocket.GetPackage().ToString();
-                                Logger.Log("b", $"user ", "c", user.name, "b", " requested file ", "c", file);
-                                if (file == "manifest.dtsod")
-                                {
-                                    lock (manifestLocker) fsp.UploadFile("share\\manifest.dtsod");
-                                }
-                                else fsp.UploadFile($"share\\{file}");
+                                var requestedFile = Path.Concat("share",handlerSocket.GetPackage().ToString());
+                                Logger.LogInfo("HandleUser", $"user {user.name} requested file {requestedFile}");
+                                if (requestedFile == "share/manifest.dtsod")
+                                    lock (manifestLocker)
+                                        fsp.UploadFile(requestedFile.ToString());
+                                else fsp.UploadFile(requestedFile.ToString());
                                 break;
                             case "requesting uuid":
-                                Logger.Log("b", $"user ", "c", user.name, "b", " requested uuid");
+                                Logger.LogInfo("HandleUser", "user " + user.name + " requested uuid");
                                 handlerSocket.SendPackage(user.uuid.ToBytes());
                                 break;
                             case "excess files found":
-                                Logger.Log("b", $"user ", "c", user.name, "b", " sent excess files list");
-                                fsp.DownloadFile($"excesses\\{user.name}-" +
-                                    $"{DateTime.Now.ToString(CultureInfo.InvariantCulture).НормализоватьДляПути()}.txt");
+                                Logger.LogInfo("HandleUser", "user " + user.name + " sent excess files list");
+                                fsp.DownloadFile(Path.Concat(
+                                    "excesses",user.name, DateTime.Now.ToString(MyTimeFormat.ForFileNames),".txt")
+                                    .ToString());
                                 break;
                             case "sending launcher error":
-                                Logger.Log("y", "user ", "c", user.name, "y", "is sending error:");
                                 string error = handlerSocket.GetPackage().ToString();
-                                Logger.Log("y", error + '\n');
+                                Logger.LogWarn("HandleUser",  "user "+ user.name + "is sending error:\n"+error);
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -151,13 +153,13 @@ static class Server
             // неизвестный юзер
             else
             {
-                Logger.Log("y", $"user with hash <{hash.HashToString()}> not found");
+                Logger.LogWarn("HandleUser", $"user with hash {hash.HashToString()} not found");
                 handlerSocket.SendPackage("user not found".ToBytes());
             }
         }
         catch (Exception ex)
         {
-            Logger.Log("y", $"UserStart() error:\n message:\n  {ex}");
+            Logger.LogWarn("HandleUser", ex);
             if (mainSocket.Connected)
             {
                 mainSocket.Shutdown(SocketShutdown.Both);
@@ -166,9 +168,10 @@ static class Server
         }
         finally
         {
-            if (handlerSocket.Connected) handlerSocket.Shutdown(SocketShutdown.Both);
+            if (handlerSocket.Connected) 
+                handlerSocket.Shutdown(SocketShutdown.Both);
             handlerSocket.Close();
-            Logger.Log("g", "user disconnected");
+            Logger.LogInfo("HandleUser", "user disconnected");
         }
     }
 
@@ -176,19 +179,19 @@ static class Server
     {
         lock (manifestLocker)
         {
-            Directory.Create($"share\\download_if_not_exist");
-            Directory.Create($"share\\sync_always");
-            Directory.Create($"share\\sync_and_remove");
+            Directory.Create("share\\download_if_not_exist");
+            Directory.Create("share\\sync_always");
+            Directory.Create("share\\sync_and_remove");
             
-            FSP.CreateManifest($"share\\download_if_not_exist");
-            FSP.CreateManifest($"share\\sync_always");
+            FSP.CreateManifest("share\\download_if_not_exist");
+            FSP.CreateManifest("share\\sync_always");
             foreach (string dir in Directory.GetDirectories("share\\sync_and_remove"))
                 FSP.CreateManifest(dir);
-            File.WriteAllText($"share\\sync_and_remove\\dirlist.dtsod",
-                $"dirs: [\""+
+            File.WriteAllText("share\\sync_and_remove\\dirlist.dtsod",
+                "dirs: [\""+
                     Directory.GetDirectories("share\\sync_and_remove")
                         .MergeToString("\",\"")
-                        .Replace($"share\\sync_and_remove\\", "")+
+                        .Replace("share\\sync_and_remove\\", "")+
                 "\"];");
         }
     }

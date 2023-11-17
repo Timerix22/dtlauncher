@@ -11,6 +11,8 @@ global using DTLib.Extensions;
 global using Launcher.Client;
 global using static Launcher.Client.LauncherClient;
 global using static Launcher.Client.Avalonia.LauncherMain;
+using DTLib.Ben.Demystifier;
+using DTLib.Logging;
 using Launcher.Client.Avalonia.GUI;
 
 namespace Launcher.Client.Avalonia;
@@ -43,8 +45,8 @@ public static class LauncherMain
 
     public static void LogError(string context, Exception ex)
     {
-        string errmsg = $"{ex.Message}\n{ex.StackTrace}";
+        string errmsg = ex.ToStringDemystified();
         MessageBox.Show($"{context} ERROR", errmsg);
-        Logger.Log(errmsg);
+        Logger.LogError("Main", errmsg);
     }
 }

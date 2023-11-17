@@ -23,7 +23,7 @@ public class Program
     
     public event Action<Program> ProgramSelectedEvent;
 
-    public Program(string descriptorFile)
+    public Program(IOPath descriptorFile)
     {
         DtsodV23 descriptor= new(File.ReadAllText(descriptorFile));
         Name = descriptor["name"];
@@ -38,7 +38,7 @@ public class Program
         ProgramLabel = new ProgramLabel(Name, IconFile);
         ProgramLabel.PointerPressed += (_, _) => ProgramSelectedEvent?.Invoke(this);
         
-        SettingsFile = $"settings{Путь.Разд}{Directory}.settings";
+        SettingsFile = $"settings{Path.Sep}{Directory}.settings";
         Settings = File.Exists(SettingsFile)
             ? DtsodConverter.UpdateByDefault(
                 new DtsodV23(File.ReadAllText(SettingsFile)),

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <RootNamespace>Launcher.Client</RootNamespace>
@@ -9,18 +9,18 @@
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\DTLib\DTLib.Network\DTLib.Network.csproj" />
-        <ProjectReference Include="..\..\DTLib\DTLib.Dtsod\DTLib.Dtsod.csproj" />
-        <ProjectReference Include="..\..\DTLib\DTLib\DTLib.csproj" />
-    </ItemGroup>
     
     <ItemGroup>
         <Compile Remove="Resources\**\*" />
         <EmbeddedResource Include="Resources\**\*" />
         <Compile Remove="debug_assets\**\*" />
         <None Update="debug_assets\**\*" CopyToOutputDirectory="Always" Condition="'$(Configuration)' == 'Debug'" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <PackageReference Include="DTLib.Dtsod" Version="1.3.0" />
+      <PackageReference Include="DTLib.Logging" Version="1.3.0" />
+      <PackageReference Include="DTLib.Network" Version="1.3.0" />
     </ItemGroup>
     
 </Project>

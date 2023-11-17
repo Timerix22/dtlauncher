@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
+using DTLib.Logging;
 
 namespace Launcher.Client.WPF.GUI;
 
@@ -9,9 +10,9 @@ public partial class LauncherWindow : Window
         InitializeComponent();
         LogBox.Text = Logger.Buffer;
         Logger.MessageSent += LogHandler;
-        LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Путь.Разд)+1);
+        LogfileLabel.Content = Logger.LogfileName.Remove(0,Logger.LogfileName.LastIndexOf(Path.Sep)+1);
         LogfileLabel.MouseLeftButtonDown += (_,_)=>
-            Process.Start("explorer.exe", LauncherLogger.LogfileDir);
+            Process.Start("explorer.exe", LauncherLogger.LogfileDir.ToString()!);
         LogfileLabel.MouseEnter += (_,_)=>LogfileLabel.Foreground=App.MySelectionColor;
         LogfileLabel.MouseLeave += (_,_)=>LogfileLabel.Foreground=App.MyWhite;
         LibraryButton.TabGrid = LibraryGrid;
@@ -25,7 +26,7 @@ public partial class LauncherWindow : Window
         ProgramGrid.Visibility = Visibility.Hidden;
         SelectTab(LibraryButton, null);
         FillProgramsPanel();
-        Logger.Log("launcher started");
+        Logger.LogInfo(nameof(LauncherWindow),"launcher started");
     }
 
     void LogHandler(string m) => Dispatcher.Invoke(()=>LogBox.Text += m);
@@ -49,15 +50,15 @@ public partial class LauncherWindow : Window
     
     private void FillProgramsPanel()
     {
-        Logger.Log("reading descriptors...");
-        string[] descriptors = Directory.GetFiles("descriptors");
+        Logger.LogInfo(nameof(LauncherWindow),"reading descriptors...");
+        var descriptors = Directory.GetFiles("descriptors");
         Programs = new Program[descriptors.Length];
         for (ushort i = 0; i < descriptors.Length; i++)
         {
-            string descriptor = descriptors[i];
+            var descriptor = descriptors[i];
             if(descriptor.EndsWith(".descriptor"))
             {
-                Logger.Log('\t'+descriptor);
+                Logger.LogInfo(nameof(LauncherWindow),descriptor.ToString());
                 Programs[i] = new Program(descriptors[i]);
                 ProgramsPanel.Children.Add(Programs[i].ProgramLabel);
                 Programs[i].ProgramSelectedEvent += SelectProgram;
@@ -84,7 +85,7 @@ public partial class LauncherWindow : Window
             DescriptionBox.Text = selectedProg.Description;
             BackgroundImage.Source =
                 new BitmapImage(new Uri(
-                    $"{Directory.GetCurrent()}{Путь.Разд}backgrounds{Путь.Разд}{selectedProg.BackgroundFile}", 
+                    $"{Directory.GetCurrent()}{Path.Sep}backgrounds{Path.Sep}{selectedProg.BackgroundFile}", 
                     UriKind.Absolute));
             ProgramSettingsViever.Content = selectedProg.SettingsPanel;
             DisplayingProgram = selectedProg;
