@@ -8,7 +8,7 @@ public class LauncherConfig
     public int GameMemory = 3000;
     public int GameWindowHeight = 500;
     public int GameWindowWidth = 900;
-    public string JavaPath = $"java{Путь.Разд}bin";
+    public string JavaPath = "java\\bin";
     public string ServerAddress = "127.0.0.1";
     public int ServerPort = 25000;
     public string Username = "";

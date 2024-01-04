@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using DTLib;
+using DTLib.Console;
 using DTLib.Dtsod;
 using DTLib.Extensions;
 using DTLib.Logging;
@@ -19,8 +19,10 @@ namespace launcher_client;
 
 internal static partial class Launcher
 {
-    private static ConsoleLogger Info = new("launcher-logs", "launcher-info");
-    private static ConsoleLogger Error = Info; //new("launcher-logs","launcher-error");
+    private static FileLogger _fileLogger = new FileLogger("launcher-logs", "launcher_client");
+    private static ILogger logger = new CompositeLogger(
+        _fileLogger,
+        new ConsoleLogger());
     private static Socket mainSocket;
     public static bool debug, offline, updated;
     private static FSP FSP;
@@ -33,12 +35,12 @@ internal static partial class Launcher
     {
         try
         {
-            Console.Title = "Timerix's minecraft launcher";
+            Console.Title = "anarx_2";
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
-            Info.Log("g", "launcher is starting");
-            PublicLog.LogEvent += Info.Log;
+            DTLibInternalLogging.SetLogger(logger);
+            logger.LogInfo("Main", "launcher is starting");
             if (args.Contains("debug")) debug = true;
             if (args.Contains("offline")) offline = true;
             if (args.Contains("updated")) updated = true;
@@ -49,10 +51,10 @@ internal static partial class Launcher
             // обновление лаунчера
             if (!updated && !offline)
             {
-                Connect("updater".ToBytes(), "updater");
-                mainSocket.SendPackage("requesting launcher update".ToBytes());
+                ConnectToLauncherServer();
+                mainSocket.SendPackage("requesting launcher update");
                 FSP.DownloadFile("minecraft-launcher.exe_new");
-                Info.Log("g", "minecraft-launcher.exe_new downloaded");
+                logger.LogInfo("Main", "minecraft-launcher.exe_new downloaded");
                 if(File.Exists("minecraft-launcher.exe_old"))
                     File.Delete("minecraft-launcher.exe_old");
                 System.IO.File.Move("minecraft-launcher.exe", "minecraft-launcher.exe_old");
@@ -78,10 +80,7 @@ internal static partial class Launcher
             tabs.Exit = ReadResource("launcher_client.gui.exit.gui");
             tabs.Log = "";
             tabs.Current = "";
-            var hasher = new Hasher();
-            var password_hash = Array.Empty<byte>();
-            // username
-            var username = "";
+            string username = "";
             if (!config.Username.IsNullOrEmpty())
             {
                 tabs.Login = tabs.Login.Remove(833, config.Username.Length).Insert(833, config.Username);
@@ -131,9 +130,9 @@ internal static partial class Launcher
                             // обновление клиента
                             if (!offline)
                             {
-                                Connect("updater".ToBytes(), "updater");
+                                ConnectToLauncherServer();
                                 //обновление файлов клиента
-                                Info.Log("b", "updating client...");
+                                logger.LogInfo("Main", "updating client...");
                                 FSP.DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
                                 FSP.DownloadByManifest("sync_always", Directory.GetCurrent(), true);
                                 foreach (string dir in new DtsodV23(FSP
@@ -141,19 +140,19 @@ internal static partial class Launcher
                                              .BytesToString())["dirs"])
                                     FSP.DownloadByManifest("sync_and_remove\\" + dir,
                                         Directory.GetCurrent() + '\\' + dir, true, true);
-                                Info.Log("g", "client updated");
+                                logger.LogInfo("Main", "client updated");
                             }
 
                             // запуск майнкрафта
-                            Info.Log("g", "launching minecraft");
+                            logger.LogInfo("Main", "launching minecraft");
                             LaunchGame(config.JavaPath, config.Username, config.UUID,
                                 config.GameMemory, config.GameWindowWidth, config.GameWindowHeight);
-                            // gameProcess.WaitForExit();
-                            // Info.Log("b", "minecraft closed");
+                            gameProcess.WaitForExit();
+                            logger.LogInfo("Main", "minecraft closed");
                         }
                         break;
                     case ConsoleKey.F2:
-                        tabs.Log = File.ReadAllText(Info.LogfileName);
+                        tabs.Log = File.ReadAllText(_fileLogger.LogfileName);
                         RenderTab(tabs.Log, 9999);
                         break;
                     case ConsoleKey.F3:
@@ -179,23 +178,23 @@ internal static partial class Launcher
             }
             catch (Exception ex)
             {
-                Error.Log("r", $"{ex.Message}\n{ex.StackTrace}");
+                logger.LogError("Main", ex);
             }
         }
         catch (Exception ex)
         {
-            Error.Log("r", $"{ex.Message}\n{ex.StackTrace}");
+            logger.LogError("Main", ex);
             ColoredConsole.Write("gray", "press any key to close...");
             Console.ReadKey();
         }
     }
 
     // подключение серверу
-    private static void Connect(byte[] hash, string server_answer)
+    private static void ConnectToLauncherServer()
     {
         if (mainSocket!=null && mainSocket.Connected)
         {
-            Info.Log("y", "socket is connected already. disconnecting...");
+            logger.LogInfo(nameof(ConnectToLauncherServer), "socket is connected already. disconnecting...");
             mainSocket.Shutdown(SocketShutdown.Both);
             mainSocket.Close();
         }
@@ -204,16 +203,15 @@ internal static partial class Launcher
         while (true)
             try
             {
-                Info.Log("b", "connecting to server address: <", "c", config.ServerAddress, "b",
-                    ">\nserver port: <", "c", $"{config.ServerPort}", "b", ">");
+                logger.LogInfo(nameof(ConnectToLauncherServer), $"connecting to server {config.ServerAddress}:{config.ServerPort}");
                 var ip = Dns.GetHostAddresses(config.ServerAddress)[0];
                 mainSocket.Connect(new IPEndPoint(ip, config.ServerPort));
-                Info.Log("g", $"connected to server {ip}");
+                logger.LogInfo(nameof(ConnectToLauncherServer), $"connected to server {ip}");
                 break;
             }
             catch (SocketException ex)
             {
-                Error.Log("r", $"{ex.Message}\n{ex.StackTrace}");
+                logger.LogError(nameof(ConnectToLauncherServer), ex);
                 Thread.Sleep(2000);
             }
 
@@ -222,13 +220,13 @@ internal static partial class Launcher
         /*FSP.PackageRecieved += (size) => 
         {
             Console.SetCursorPosition(0, 30);
-            Info.Log("b", "downloading file... [", "c", size.ToString(), "b","/", "c", FSP.Filesize = )
+            logger.LogInfo(nameof(Connect), "downloading file... [", size.ToString(), "/", FSP.Filesize = )
         };*/
         mainSocket.ReceiveTimeout = 2500;
         mainSocket.SendTimeout = 2500;
-        mainSocket.GetAnswer("requesting hash");
-        mainSocket.SendPackage(hash);
-        mainSocket.GetAnswer(server_answer);
+        mainSocket.GetAnswer("requesting user name");
+        mainSocket.SendPackage("minecraft-launcher");
+        mainSocket.GetAnswer("minecraft-launcher OK");
     }
 
     private static void RenderTab(string tab, ushort bufferHeight = 30)
@@ -275,10 +273,8 @@ internal static partial class Launcher
                 default:
                     if (output.Length <= maxlength)
                     {
-                        string thisChar;
-                        if (pressedKey.Modifiers.HasFlag(ConsoleModifiers.Shift))
-                            thisChar = pressedKey.KeyChar.ToString().ToUpper();
-                        else thisChar = pressedKey.KeyChar.ToString();
+                        string keyC = pressedKey.KeyChar.ToString();
+                        string thisChar = pressedKey.Modifiers.HasFlag(ConsoleModifiers.Shift) ? keyC.ToUpper() : keyC;
                         output += thisChar;
                     }
 

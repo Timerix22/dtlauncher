@@ -1,6 +1,6 @@
 gameMemory: "3000";
 gameWindowWidth: "1600";
-gameWinowHeight: "1000";
+gameWindowHeight: "1000";
 javaPath: "java\bin";
 serverAddress: "127.0.0.1";
 serverPort: 25000;
