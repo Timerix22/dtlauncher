@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,11 +14,11 @@ namespace launcher_server;
 static class Server
 {
     private static ILogger logger = new CompositeLogger(
-        new FileLogger("logs","launcher_server"),
+        new FileLogger("logs","launcher-server"),
         new ConsoleLogger());
     static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     static DtsodV23 config = null!;
-    static bool debug;
+    private static readonly IOPath shared_dir = "public";
 
     static object manifestLocker = new();
 
@@ -30,11 +29,11 @@ static class Server
             Console.Title = "minecraft_launcher_server";
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
-            DTLibInternalLogging.SetLogger(logger);
-            config = new DtsodV23(File.ReadAllText("launcher-server.dtsod"));
-            if (args.Contains("debug")) debug = true;
+            
+            config = new DtsodV23(File.ReadAllText("minecraft-launcher-server.dtsod"));
+            
             logger.LogInfo("Main",  $"local address: {config["local_ip"]}");
-            logger.LogInfo("Main", $"public address: {OldNetwork.GetPublicIP()}");
+            logger.LogInfo("Main", $"public address: {Functions.GetPublicIP()}");
                 logger.LogInfo("Main", $"port: {config["local_port"]}");
             mainSocket.Bind(new IPEndPoint(IPAddress.Parse(config["local_ip"]), config["local_port"]));
             mainSocket.Listen(1000);
@@ -67,7 +66,7 @@ static class Server
             handlerSocket.SendPackage("requesting user name");
             string connectionString = handlerSocket.GetPackage().BytesToString();
             FSP fsp = new(handlerSocket);
-            FSP.debug = debug;
+            
             // запрос от апдейтера
             if (connectionString == "minecraft-launcher")
             {
@@ -83,12 +82,14 @@ static class Server
                         {
                             case "requesting launcher update":
                                 logger.LogInfo(nameof(HandleUser), "updater requested launcher update");
-                                fsp.UploadFile("share\\minecraft-launcher.exe");
+                                // ReSharper disable once InconsistentlySynchronizedField
+                                fsp.UploadFile(Path.Concat(shared_dir, "minecraft-launcher.exe"));
                                 break;
                             case "requesting file download":
                                 var file = handlerSocket.GetPackage().BytesToString();
                                 logger.LogInfo(nameof(HandleUser), $"updater requested file {file}");
-                                fsp.UploadFile($"share\\{file}");
+                                // ReSharper disable once InconsistentlySynchronizedField
+                                fsp.UploadFile(Path.Concat(shared_dir, file));
                                 break;
                             default:
                                 throw new Exception("unknown request: " + request);
@@ -118,26 +119,23 @@ static class Server
     {
         lock (manifestLocker)
         {
-            FSP.CreateManifest("share\\download_if_not_exist");
-            FSP.CreateManifest("share\\sync_always");
-            if(!Directory.Exists("share\\sync_and_remove"))
-            {
-                Directory.Create("share\\sync_and_remove");
-                logger.LogInfo(nameof(CreateManifests), "can't create manifest, dir <share\\sync_and_remove> doesn't exist");
-            }
-            else foreach (string dir in Directory.GetDirectories("share\\sync_and_remove"))
+            var sync_and_remove_dir = Path.Concat(shared_dir, "sync_and_remove");
+            FSP.CreateManifest(Path.Concat(shared_dir, "download_if_not_exist"));
+            FSP.CreateManifest(Path.Concat(shared_dir, "sync_always"));
+            if (!Directory.Exists(sync_and_remove_dir))
+                Directory.Create(sync_and_remove_dir);
+            else foreach (var dir in Directory.GetDirectories(sync_and_remove_dir))
                 FSP.CreateManifest(dir);
-            if(Directory.GetDirectories("share\\sync_and_remove").Length==0)
-                File.WriteAllText("share\\sync_and_remove\\dirlist.dtsod", "dirs: [ ];");
-            else
+            string dirlist_content = "dirs: [ ];";
+            if(Directory.GetDirectories(sync_and_remove_dir).Length > 0)
             {
-                File.WriteAllText("share\\sync_and_remove\\dirlist.dtsod",
-                    "dirs: [\""
-                    + Directory.GetDirectories("share\\sync_and_remove")
-                        .MergeToString("\", \"")
-                        .Replace("share\\sync_and_remove\\", "")
-                    + "\"];");
+                dirlist_content = "dirs: [\""
+                      + Directory.GetDirectories(sync_and_remove_dir)
+                          .MergeToString("\", \"")
+                          .Replace(sync_and_remove_dir.Str, "")
+                      + "\"];";
             }
+            File.WriteAllText(Path.Concat(sync_and_remove_dir, "dirlist.dtsod"), dirlist_content);
         }
     }
 }

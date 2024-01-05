@@ -20,7 +20,7 @@ namespace launcher_client;
 
 internal static partial class Launcher
 {
-    private static FileLogger _fileLogger = new("launcher-logs", "launcher_client");
+    private static FileLogger _fileLogger = new("launcher-logs", "launcher-client");
     private static ILogger logger = new CompositeLogger(
         _fileLogger,
         new ConsoleLogger());
@@ -50,7 +50,6 @@ internal static partial class Launcher
                 ? LauncherConfig.CreateDefault()
                 : LauncherConfig.LoadFromFile();
             
-            DTLibInternalLogging.SetLogger(logger);
             logger.DebugLogEnabled = debug;
             logger.LogInfo("Main", "launcher is starting");
             
@@ -133,9 +132,9 @@ internal static partial class Launcher
                                 FSP.DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
                                 FSP.DownloadByManifest("sync_always", Directory.GetCurrent(), true);
                                 foreach (string dir in new DtsodV23(FSP
-                                             .DownloadFileToMemory("sync_and_remove\\dirlist.dtsod")
+                                             .DownloadFileToMemory(Path.Concat("sync_and_remove","dirlist.dtsod"))
                                              .BytesToString())["dirs"])
-                                    FSP.DownloadByManifest("sync_and_remove\\" + dir,
+                                    FSP.DownloadByManifest(Path.Concat("sync_and_remove", dir),
                                         Directory.GetCurrent() + '\\' + dir, true, true);
                                 logger.LogInfo("Main", "client updated");
                             }
@@ -149,7 +148,7 @@ internal static partial class Launcher
                                 config.GameWindowHeight,
                                 Directory.GetCurrent());
                             logger.LogDebug("LaunchGame", gameOptions);
-                            var gameProcess = Process.Start($"{config.JavaPath}\\java.exe", gameOptions);
+                            var gameProcess = Process.Start(config.JavaPath.Str, gameOptions);
                             gameProcess.WaitForExit();
                             logger.LogInfo("Main", "minecraft closed");
                         }
@@ -202,7 +201,6 @@ internal static partial class Launcher
             mainSocket.Close();
             mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             FSP = new FSP(mainSocket);
-            FSP.debug = debug;
         }
 
         while (true)

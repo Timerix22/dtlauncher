@@ -5,12 +5,12 @@ namespace launcher_client;
 
 public class LauncherConfig
 {
-    public static string ConfigFilePath = "launcher.dtsod";
+    public static IOPath ConfigFilePath = "minecraft-launcher.dtsod";
     
     public int GameMemory = 3000;
     public int GameWindowHeight = 500;
     public int GameWindowWidth = 900;
-    public string JavaPath = "jre\\bin";
+    public IOPath JavaPath = "jre/bin/java.exe";
     public string ServerAddress = "127.0.0.1";
     public int ServerPort = 25000;
     public string Username = "";
@@ -36,7 +36,7 @@ public class LauncherConfig
             { "gameMemory", GameMemory },
             { "gameWindowHeight", GameWindowHeight },
             { "gameWindowWidth", GameWindowWidth },
-            { "javaPath", JavaPath },
+            { "javaPath", JavaPath.Str },
             { "serverAddress", ServerAddress },
             { "serverPort", ServerPort },
             { "username", Username },

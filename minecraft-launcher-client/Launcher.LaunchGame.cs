@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace launcher_client;
+﻿namespace launcher_client;
 
 internal static partial class Launcher
 {
