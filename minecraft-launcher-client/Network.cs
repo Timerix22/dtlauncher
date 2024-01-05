@@ -21,7 +21,7 @@ public class Network
     {
         if (mainSocket.Connected)
         {
-            Logger.LogInfo(nameof(ConnectToLauncherServer), "socket is connected already. disconnecting...");
+            Logger.LogInfo(nameof(Network), "socket is connected already. disconnecting...");
             mainSocket.Shutdown(SocketShutdown.Both);
             mainSocket.Close();
             mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -31,15 +31,15 @@ public class Network
         while (true)
             try
             {
-                Logger.LogInfo(nameof(ConnectToLauncherServer), $"connecting to server {Config.ServerAddress}:{Config.ServerPort}");
+                Logger.LogInfo(nameof(Network), $"connecting to server {Config.ServerAddress}:{Config.ServerPort}");
                 var ip = Dns.GetHostAddresses(Config.ServerAddress)[0];
                 mainSocket.Connect(new IPEndPoint(ip, Config.ServerPort));
-                Logger.LogInfo(nameof(ConnectToLauncherServer), $"connected to server {ip}");
+                Logger.LogInfo(nameof(Network), $"connected to server {ip}");
                 break;
             }
             catch (SocketException ex)
             {
-                Logger.LogError(nameof(ConnectToLauncherServer), ex);
+                Logger.LogError(nameof(Network), ex);
                 Thread.Sleep(2000);
             }
 
@@ -53,7 +53,7 @@ public class Network
     public static void DownloadByManifest(IOPath dirOnServer, IOPath dirOnClient, bool overwrite = false, bool delete_excess = false)
     {
         var manifestPath = Path.Concat(dirOnServer, "manifest.dtsod");
-        Logger.LogDebug(nameof(DownloadByManifest), manifestPath);
+        Logger.LogDebug(nameof(Network), manifestPath);
         string manifestContent = Fsp.DownloadFileToMemory(manifestPath).BytesToString();
         var manifest = new DtsodV23(manifestContent);
         var hasher = new Hasher();
@@ -72,5 +72,20 @@ public class Network
                     File.Delete(file);
             }
         }
+    }
+
+    public static void UpdateGame()
+    {
+        //обновление файлов клиента
+        Logger.LogInfo(nameof(Network), "updating client...");
+        DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
+        DownloadByManifest("sync_always", Directory.GetCurrent(), true);
+        var dirlistDtsod = new DtsodV23(Fsp
+            .DownloadFileToMemory(Path.Concat("sync_and_remove","dirlist.dtsod"))
+            .BytesToString());
+        foreach (string dir in dirlistDtsod["dirs"])
+            DownloadByManifest(Path.Concat("sync_and_remove", dir),
+                Path.Concat(Directory.GetCurrent(), dir), true, true);
+        Logger.LogInfo(nameof(Network), "client updated");
     }
 }

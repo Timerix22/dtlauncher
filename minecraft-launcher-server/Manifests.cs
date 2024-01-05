@@ -24,12 +24,12 @@ public static class Manifests
         var manifestPath = Path.Concat(dir, "manifest.dtsod");
         if (Directory.GetFiles(dir).Contains(manifestPath))
             File.Delete(manifestPath);
-        foreach (var _file in Directory.GetAllFiles(dir))
+        foreach (var fileInDir in Directory.GetAllFiles(dir))
         {
-            var file = _file.Remove(0, dir.Length);
-            manifestBuilder.Append(file);
+            var fileRelative = fileInDir.RemoveBase(dir);
+            manifestBuilder.Append(fileRelative);
             manifestBuilder.Append(": \"");
-            byte[] hash = hasher.HashFile(Path.Concat(dir, file));
+            byte[] hash = hasher.HashFile(Path.Concat(fileInDir));
             manifestBuilder.Append(hash.HashToString());
             manifestBuilder.Append("\";\n");
         }

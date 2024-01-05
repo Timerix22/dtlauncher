@@ -122,17 +122,7 @@ internal static partial class Launcher
                             if (!offline)
                             {
                                 ConnectToLauncherServer();
-                                //обновление файлов клиента
-                                Logger.LogInfo("Main", "updating client...");
-                                DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
-                                DownloadByManifest("sync_always", Directory.GetCurrent(), true);
-                                var dirlistDtsod = new DtsodV23(Fsp
-                                    .DownloadFileToMemory(Path.Concat("sync_and_remove","dirlist.dtsod"))
-                                    .BytesToString());
-                                foreach (string dir in dirlistDtsod["dirs"])
-                                    DownloadByManifest(Path.Concat("sync_and_remove", dir),
-                                        Path.Concat(Directory.GetCurrent(), dir), true, true);
-                                Logger.LogInfo("Main", "client updated");
+                                UpdateGame();
                             }
 
                             // запуск майнкрафта
