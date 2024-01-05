@@ -2,11 +2,8 @@
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using DTLib.Console;
 using DTLib.Dtsod;
 using DTLib.Extensions;
@@ -15,20 +12,18 @@ using DTLib.Network;
 using DTLib.Filesystem;
 using Directory = DTLib.Filesystem.Directory;
 using File = DTLib.Filesystem.File;
-
+using static launcher_client.Network;
 namespace launcher_client;
 
 internal static partial class Launcher
 {
     private static FileLogger _fileLogger = new("launcher-logs", "launcher-client");
-    private static ILogger logger = new CompositeLogger(
+    public static ILogger Logger = new CompositeLogger(
         _fileLogger,
         new ConsoleLogger());
-    private static Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+    public static LauncherConfig Config = null!;
     public static bool debug, offline, updated;
-    private static FSP FSP = new(mainSocket);
     private static dynamic tabs = new ExpandoObject();
-    private static LauncherConfig config = null!;
 
     private static void Main(string[] args)
     {
@@ -46,12 +41,12 @@ internal static partial class Launcher
 #endif
             if (args.Contains("offline")) offline = true;
             if (args.Contains("updated")) updated = true;
-            config = !File.Exists(LauncherConfig.ConfigFilePath)
+            Config = !File.Exists(LauncherConfig.ConfigFilePath)
                 ? LauncherConfig.CreateDefault()
                 : LauncherConfig.LoadFromFile();
             
-            logger.DebugLogEnabled = debug;
-            logger.LogInfo("Main", "launcher is starting");
+            Logger.DebugLogEnabled = debug;
+            Logger.LogInfo("Main", "launcher is starting");
             
             if(File.Exists("minecraft-launcher.exe_old"))
                 File.Delete("minecraft-launcher.exe_old");
@@ -61,8 +56,8 @@ internal static partial class Launcher
             {
                 ConnectToLauncherServer();
                 mainSocket.SendPackage("requesting launcher update");
-                FSP.DownloadFile("minecraft-launcher.exe_new");
-                logger.LogInfo("Main", "minecraft-launcher.exe_new downloaded");
+                Fsp.DownloadFile("minecraft-launcher.exe_new");
+                Logger.LogInfo("Main", "minecraft-launcher.exe_new downloaded");
                 System.IO.File.Move("minecraft-launcher.exe", "minecraft-launcher.exe_old");
                 Process.Start("cmd","/c " +
                             "move minecraft-launcher.exe_new minecraft-launcher.exe && " +
@@ -77,10 +72,10 @@ internal static partial class Launcher
             tabs.Log = "";
             tabs.Current = "";
             string username = "";
-            if (!config.Username.IsNullOrEmpty())
+            if (!Config.Username.IsNullOrEmpty())
             {
-                tabs.Login = tabs.Login.Remove(833, config.Username.Length).Insert(833, config.Username);
-                username = config.Username;
+                tabs.Login = tabs.Login.Remove(833, Config.Username.Length).Insert(833, Config.Username);
+                username = Config.Username;
             }
 
             RenderTab(tabs.Login);
@@ -110,8 +105,8 @@ internal static partial class Launcher
                             RenderTab(tabs.Login);
                             if (_username.Length < 5)
                                 throw new Exception("username length should be > 4 and < 17");
-                            config.Username = _username;
-                            config.Save();
+                            Config.Username = _username;
+                            Config.Save();
                             username = _username;
                             tabs.Login = tabs.Login.Remove(833, _username.Length).Insert(833, _username);
                             RenderTab(tabs.Login);
@@ -128,29 +123,30 @@ internal static partial class Launcher
                             {
                                 ConnectToLauncherServer();
                                 //обновление файлов клиента
-                                logger.LogInfo("Main", "updating client...");
-                                FSP.DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
-                                FSP.DownloadByManifest("sync_always", Directory.GetCurrent(), true);
-                                foreach (string dir in new DtsodV23(FSP
-                                             .DownloadFileToMemory(Path.Concat("sync_and_remove","dirlist.dtsod"))
-                                             .BytesToString())["dirs"])
-                                    FSP.DownloadByManifest(Path.Concat("sync_and_remove", dir),
-                                        Directory.GetCurrent() + '\\' + dir, true, true);
-                                logger.LogInfo("Main", "client updated");
+                                Logger.LogInfo("Main", "updating client...");
+                                DownloadByManifest("download_if_not_exist", Directory.GetCurrent());
+                                DownloadByManifest("sync_always", Directory.GetCurrent(), true);
+                                var dirlistDtsod = new DtsodV23(Fsp
+                                    .DownloadFileToMemory(Path.Concat("sync_and_remove","dirlist.dtsod"))
+                                    .BytesToString());
+                                foreach (string dir in dirlistDtsod["dirs"])
+                                    DownloadByManifest(Path.Concat("sync_and_remove", dir),
+                                        Path.Concat(Directory.GetCurrent(), dir), true, true);
+                                Logger.LogInfo("Main", "client updated");
                             }
 
                             // запуск майнкрафта
-                            logger.LogInfo("Main", "launching minecraft");
-                            string gameOptions = ConstructGameLaunchArgs(config.Username, 
-                                NameUUIDFromString("OfflinePlayer:" + config.Username),
-                                config.GameMemory, 
-                                config.GameWindowWidth, 
-                                config.GameWindowHeight,
+                            Logger.LogInfo("Main", "launching minecraft");
+                            string gameOptions = ConstructGameLaunchArgs(Config.Username, 
+                                NameUUIDFromString("OfflinePlayer:" + Config.Username),
+                                Config.GameMemory, 
+                                Config.GameWindowWidth, 
+                                Config.GameWindowHeight,
                                 Directory.GetCurrent());
-                            logger.LogDebug("LaunchGame", gameOptions);
-                            var gameProcess = Process.Start(config.JavaPath.Str, gameOptions);
+                            Logger.LogDebug("LaunchGame", gameOptions);
+                            var gameProcess = Process.Start(Config.JavaPath.Str, gameOptions);
                             gameProcess.WaitForExit();
-                            logger.LogInfo("Main", "minecraft closed");
+                            Logger.LogInfo("Main", "minecraft closed");
                         }
                         break;
                     case ConsoleKey.F2:
@@ -180,49 +176,15 @@ internal static partial class Launcher
             }
             catch (Exception ex)
             {
-                logger.LogError("Main", ex);
+                Logger.LogError("Main", ex);
             }
         }
         catch (Exception ex)
         {
-            logger.LogError("Main", ex);
+            Logger.LogError("Main", ex);
             ColoredConsole.Write("gray", "press any key to close...");
             Console.ReadKey();
         }
-    }
-
-    // подключение серверу
-    private static void ConnectToLauncherServer()
-    {
-        if (mainSocket.Connected)
-        {
-            logger.LogInfo(nameof(ConnectToLauncherServer), "socket is connected already. disconnecting...");
-            mainSocket.Shutdown(SocketShutdown.Both);
-            mainSocket.Close();
-            mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            FSP = new FSP(mainSocket);
-        }
-
-        while (true)
-            try
-            {
-                logger.LogInfo(nameof(ConnectToLauncherServer), $"connecting to server {config.ServerAddress}:{config.ServerPort}");
-                var ip = Dns.GetHostAddresses(config.ServerAddress)[0];
-                mainSocket.Connect(new IPEndPoint(ip, config.ServerPort));
-                logger.LogInfo(nameof(ConnectToLauncherServer), $"connected to server {ip}");
-                break;
-            }
-            catch (SocketException ex)
-            {
-                logger.LogError(nameof(ConnectToLauncherServer), ex);
-                Thread.Sleep(2000);
-            }
-
-        mainSocket.ReceiveTimeout = 2500;
-        mainSocket.SendTimeout = 2500;
-        mainSocket.GetAnswer("requesting user name");
-        mainSocket.SendPackage("minecraft-launcher");
-        mainSocket.GetAnswer("minecraft-launcher OK");
     }
 
     private static void RenderTab(string tab, ushort bufferHeight = 30)
