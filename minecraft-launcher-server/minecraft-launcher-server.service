@@ -3,8 +3,8 @@
 Description=minecraft launcher backend in c#
 
 [Service]
-WorkingDirectory=/opt/minecraft-launcher/minecraft-launcher-server/
-ExecStart=/bin/bash /opt/minecraft-launcher/minecraft-launcher-server/start.sh
+WorkingDirectory=/opt/minecraft-launcher/minecraft-launcher-server/bin/publish
+ExecStart=/opt/minecraft-launcher/minecraft-launcher-server/bin/publish/minecraft-launcher-server
 Restart=always
 
 [Install]
