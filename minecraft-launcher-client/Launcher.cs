@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using DTLib.Console;
-using DTLib.Dtsod;
 using DTLib.Extensions;
 using DTLib.Logging;
 using DTLib.Network;
@@ -153,7 +152,7 @@ internal static partial class Launcher
                         if (tabs.Current == tabs.Exit)
                         {
                             Console.Clear();
-                            Console.BufferHeight = 9999;
+                            // Console.BufferHeight = 9999;
                             return;
                         }
                         break;
@@ -175,6 +174,7 @@ internal static partial class Launcher
             ColoredConsole.Write("gray", "press any key to close...");
             Console.ReadKey();
         }
+        Console.CursorVisible = true;
     }
 
     private static void RenderTab(string tab, ushort bufferHeight = 30)
@@ -182,7 +182,7 @@ internal static partial class Launcher
         tabs.Current = tab;
         Console.Clear();
         Console.SetWindowSize(80, 30);
-        Console.SetBufferSize(80, bufferHeight);
+        // Console.SetBufferSize(80, bufferHeight);
         ColoredConsole.Write("w", tab);
     }
 
