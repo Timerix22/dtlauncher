@@ -5,21 +5,19 @@ namespace launcher_client;
 
 public class LauncherConfig
 {
+    public static string ConfigFilePath = "launcher.dtsod";
+    
     public int GameMemory = 3000;
     public int GameWindowHeight = 500;
     public int GameWindowWidth = 900;
-    public string JavaPath = "java\\bin";
+    public string JavaPath = "jre\\bin";
     public string ServerAddress = "127.0.0.1";
     public int ServerPort = 25000;
     public string Username = "";
-    public string UUID = "";
-
-    public string ConfigPath;
     
+    private LauncherConfig(){}
     
-    public LauncherConfig(){}
-    
-    public LauncherConfig(DtsodV23 dtsod, string configPath)
+    private LauncherConfig(DtsodV23 dtsod)
     {
         GameMemory = dtsod["gameMemory"];
         GameWindowHeight = dtsod["gameWindowHeight"];
@@ -28,18 +26,12 @@ public class LauncherConfig
         ServerAddress = dtsod["serverAddress"];
         ServerPort = dtsod["serverPort"];
         Username = dtsod["username"];
-        UUID = dtsod["uuid"];
-
-        ConfigPath = configPath;
     }
 
-    public LauncherConfig(string configPath) :
-        this(new DtsodV23(File.ReadAllText(configPath)), configPath)
-    { }
+    public static LauncherConfig LoadFromFile() => new(new DtsodV23(File.ReadAllText(ConfigFilePath)));
 
-    public DtsodV23 ToDtsod()
-    {
-        return new()
+    public DtsodV23 ToDtsod() =>
+        new()
         {
             { "gameMemory", GameMemory },
             { "gameWindowHeight", GameWindowHeight },
@@ -48,21 +40,16 @@ public class LauncherConfig
             { "serverAddress", ServerAddress },
             { "serverPort", ServerPort },
             { "username", Username },
-            { "uuid", UUID }
         };
-    }
 
     public void Save()
     {
-        File.WriteAllText(ConfigPath, ToDtsod().ToString());
+        File.WriteAllText(ConfigFilePath, ToDtsod().ToString());
     }
     
-    public static LauncherConfig CreateDefault(string configPath)
+    public static LauncherConfig CreateDefault()
     {
-        var c = new LauncherConfig
-        {
-            ConfigPath = configPath
-        };
+        var c = new LauncherConfig();
         c.Save();
         return c;
     }

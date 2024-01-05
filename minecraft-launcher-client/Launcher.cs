@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using DTLib.Console;
@@ -12,6 +12,7 @@ using DTLib.Dtsod;
 using DTLib.Extensions;
 using DTLib.Logging;
 using DTLib.Network;
+using DTLib.Filesystem;
 using Directory = DTLib.Filesystem.Directory;
 using File = DTLib.Filesystem.File;
 
@@ -19,17 +20,15 @@ namespace launcher_client;
 
 internal static partial class Launcher
 {
-    private static FileLogger _fileLogger = new FileLogger("launcher-logs", "launcher_client");
+    private static FileLogger _fileLogger = new("launcher-logs", "launcher_client");
     private static ILogger logger = new CompositeLogger(
         _fileLogger,
         new ConsoleLogger());
-    private static Socket mainSocket;
+    private static Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
     public static bool debug, offline, updated;
-    private static FSP FSP;
+    private static FSP FSP = new(mainSocket);
     private static dynamic tabs = new ExpandoObject();
-    private static LauncherConfig config;
-    private static string configFileName = "launcher.dtsod";
-    public static Process gameProcess;
+    private static LauncherConfig config = null!;
 
     private static void Main(string[] args)
     {
@@ -39,15 +38,22 @@ internal static partial class Launcher
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
-            DTLibInternalLogging.SetLogger(logger);
-            logger.LogInfo("Main", "launcher is starting");
+
+#if  DEBUG
+            debug = true;
+#else
             if (args.Contains("debug")) debug = true;
+#endif
             if (args.Contains("offline")) offline = true;
             if (args.Contains("updated")) updated = true;
-            config = !File.Exists(configFileName)
-                ? LauncherConfig.CreateDefault(configFileName)
-                : new LauncherConfig(configFileName);
-
+            config = !File.Exists(LauncherConfig.ConfigFilePath)
+                ? LauncherConfig.CreateDefault()
+                : LauncherConfig.LoadFromFile();
+            
+            DTLibInternalLogging.SetLogger(logger);
+            logger.DebugLogEnabled = debug;
+            logger.LogInfo("Main", "launcher is starting");
+            
             // обновление лаунчера
             if (!updated && !offline)
             {
@@ -63,21 +69,9 @@ internal static partial class Launcher
             }
 
             // если уже обновлён
-            var launcherAssembly = Assembly.GetExecutingAssembly();
-
-            // читает текст из файлов, добавленных в сборку в виде ресурсов
-            string ReadResource(string resource_path)
-            {
-                using var resStream = launcherAssembly.GetManifestResourceStream(resource_path)
-                                      ?? throw new Exception($"can't find resource <{resource_path}>");
-                using var resourceStreamReader =
-                    new System.IO.StreamReader(resStream, Encoding.UTF8);
-                return resourceStreamReader.ReadToEnd();
-            }
-
-            tabs.Login = ReadResource("launcher_client.gui.login.gui");
-            tabs.Settings = ReadResource("launcher_client.gui.settings.gui");
-            tabs.Exit = ReadResource("launcher_client.gui.exit.gui");
+            tabs.Login = EmbeddedResources.ReadText("launcher_client.gui.login.gui");
+            tabs.Settings = EmbeddedResources.ReadText("launcher_client.gui.settings.gui");
+            tabs.Exit = EmbeddedResources.ReadText("launcher_client.gui.exit.gui");
             tabs.Log = "";
             tabs.Current = "";
             string username = "";
@@ -145,8 +139,13 @@ internal static partial class Launcher
 
                             // запуск майнкрафта
                             logger.LogInfo("Main", "launching minecraft");
-                            LaunchGame(config.JavaPath, config.Username, config.UUID,
-                                config.GameMemory, config.GameWindowWidth, config.GameWindowHeight);
+                            string gameOptions = ConstructGameOptions(config.Username, 
+                                NameUUIDFromString("OfflinePlayer:" + config.Username),
+                                config.GameMemory, 
+                                config.GameWindowWidth, 
+                                config.GameWindowHeight);
+                            logger.LogDebug("LaunchGame", gameOptions);
+                            var gameProcess = Process.Start($"{config.JavaPath}\\java.exe", gameOptions);
                             gameProcess.WaitForExit();
                             logger.LogInfo("Main", "minecraft closed");
                         }
@@ -192,14 +191,16 @@ internal static partial class Launcher
     // подключение серверу
     private static void ConnectToLauncherServer()
     {
-        if (mainSocket!=null && mainSocket.Connected)
+        if (mainSocket.Connected)
         {
             logger.LogInfo(nameof(ConnectToLauncherServer), "socket is connected already. disconnecting...");
             mainSocket.Shutdown(SocketShutdown.Both);
             mainSocket.Close();
+            mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            FSP = new FSP(mainSocket);
+            FSP.debug = debug;
         }
 
-        mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         while (true)
             try
             {
@@ -215,13 +216,6 @@ internal static partial class Launcher
                 Thread.Sleep(2000);
             }
 
-        FSP = new FSP(mainSocket);
-        FSP.debug = debug;
-        /*FSP.PackageRecieved += (size) => 
-        {
-            Console.SetCursorPosition(0, 30);
-            logger.LogInfo(nameof(Connect), "downloading file... [", size.ToString(), "/", FSP.Filesize = )
-        };*/
         mainSocket.ReceiveTimeout = 2500;
         mainSocket.SendTimeout = 2500;
         mainSocket.GetAnswer("requesting user name");
@@ -284,5 +278,23 @@ internal static partial class Launcher
                     break;
             }
         }
+    }
+
+    //minecraft player uuid explanation
+    //https://gist.github.com/CatDany/0e71ca7cd9b42a254e49/
+    //java uuid generation in c#
+    //https://stackoverflow.com/questions/18021808/uuid-interop-with-c-sharp-code
+    public static string NameUUIDFromString(string input)
+        => NameUUIDFromBytes(Encoding.UTF8.GetBytes(input));
+    
+    public static string NameUUIDFromBytes(byte[] input)
+    {
+        byte[] hash = MD5.HashData(input);
+        hash[6] &= 0x0f;
+        hash[6] |= 0x30;
+        hash[8] &= 0x3f;
+        hash[8] |= 0x80;
+        string hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
+        return hex.Insert(8, "-").Insert(13, "-").Insert(18, "-").Insert(23, "-");
     }
 }

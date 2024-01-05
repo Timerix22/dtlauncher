@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <RootNamespace>launcher_server</RootNamespace>
     <AssemblyName>minecraft-launcher-server</AssemblyName>

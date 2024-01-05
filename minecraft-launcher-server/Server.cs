@@ -18,7 +18,7 @@ static class Server
         new FileLogger("logs","launcher_server"),
         new ConsoleLogger());
     static readonly Socket mainSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-    static DtsodV23 config;
+    static DtsodV23 config = null!;
     static bool debug;
 
     static object manifestLocker = new();
@@ -45,7 +45,7 @@ static class Server
             while (true)
             {
                 var userSocket = mainSocket.Accept();
-                var userThread = new Thread(obj => HandleUser((Socket)obj));
+                var userThread = new Thread(obj => HandleUser((Socket)obj!));
                 userThread.Start(userSocket);
             }
         }
