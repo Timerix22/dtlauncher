@@ -142,11 +142,12 @@ internal static partial class Launcher
 
                             // запуск майнкрафта
                             logger.LogInfo("Main", "launching minecraft");
-                            string gameOptions = ConstructGameOptions(config.Username, 
+                            string gameOptions = ConstructGameLaunchArgs(config.Username, 
                                 NameUUIDFromString("OfflinePlayer:" + config.Username),
                                 config.GameMemory, 
                                 config.GameWindowWidth, 
-                                config.GameWindowHeight);
+                                config.GameWindowHeight,
+                                Directory.GetCurrent());
                             logger.LogDebug("LaunchGame", gameOptions);
                             var gameProcess = Process.Start($"{config.JavaPath}\\java.exe", gameOptions);
                             gameProcess.WaitForExit();
