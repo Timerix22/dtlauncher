@@ -54,6 +54,9 @@ internal static partial class Launcher
             logger.DebugLogEnabled = debug;
             logger.LogInfo("Main", "launcher is starting");
             
+            if(File.Exists("minecraft-launcher.exe_old"))
+                File.Delete("minecraft-launcher.exe_old");
+            
             // обновление лаунчера
             if (!updated && !offline)
             {
@@ -61,10 +64,10 @@ internal static partial class Launcher
                 mainSocket.SendPackage("requesting launcher update");
                 FSP.DownloadFile("minecraft-launcher.exe_new");
                 logger.LogInfo("Main", "minecraft-launcher.exe_new downloaded");
-                if(File.Exists("minecraft-launcher.exe_old"))
-                    File.Delete("minecraft-launcher.exe_old");
                 System.IO.File.Move("minecraft-launcher.exe", "minecraft-launcher.exe_old");
-                Process.Start("cmd","/c move minecraft-launcher.exe_new minecraft-launcher.exe && minecraft-launcher.exe updated");
+                Process.Start("cmd","/c " +
+                            "move minecraft-launcher.exe_new minecraft-launcher.exe && " +
+                            "minecraft-launcher.exe updated");
                 return;
             }
 
